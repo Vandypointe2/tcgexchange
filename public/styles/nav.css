@@ -1,0 +1,8 @@
+.nav{position:relative; display:flex; align-items:center;}
+.nav-burger{width:40px; height:40px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); display:inline-flex; flex-direction:column; justify-content:center; gap:5px; padding:9px; cursor:pointer;}
+.nav-burger span{display:block; height:2px; width:100%; background: rgba(255,255,255,.85); border-radius:2px;}
+
+.nav-menu{position:absolute; left:0; top:46px; min-width:170px; padding:10px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background: rgba(10,10,24,.95); box-shadow: 0 14px 50px rgba(0,0,0,.55); display:none; z-index:70;}
+.nav-menu.open{display:flex; flex-direction:column; gap:8px;}
+.nav-menu a{color: var(--text); text-decoration:none; padding:.5rem .6rem; border-radius:.6rem; border:1px solid rgba(255,255,255,.10);}
+.nav-menu a:hover{border-color: rgba(255,255,255,.28)}

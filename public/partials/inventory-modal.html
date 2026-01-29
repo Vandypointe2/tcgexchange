@@ -1,0 +1,42 @@
+<div id="inv-modal" class="inv-modal" aria-hidden="true">
+  <div class="inv-backdrop" data-close="true"></div>
+  <div class="inv-panel" role="dialog" aria-modal="true" aria-label="Add card">
+    <h2 id="inv-title">Add</h2>
+    <form id="inv-form">
+      <input type="hidden" id="inv-cardId" />
+      <input type="hidden" id="inv-kind" />
+
+      <label class="label">
+        <span>Quantity</span>
+        <input id="inv-qty" type="number" min="1" value="1" class="input" />
+      </label>
+
+      <label class="label" id="inv-condition-wrap">
+        <span id="inv-condition-label">Condition</span>
+        <select id="inv-condition" class="input">
+          <option value="NM">NM</option>
+          <option value="LP" selected>LP</option>
+          <option value="MP">MP</option>
+          <option value="HP">HP</option>
+          <option value="DMG">DMG</option>
+        </select>
+      </label>
+
+      <label class="label" id="inv-priority-wrap" style="display:none;">
+        <span>Priority</span>
+        <select id="inv-priority" class="input">
+          <option value="1">1 (Highest)</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5 (Lowest)</option>
+        </select>
+      </label>
+
+      <div class="row" style="justify-content:flex-end; margin-top:12px;">
+        <button type="button" class="btn-small" data-close="true">Cancel</button>
+        <button type="submit" class="btn-small">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
