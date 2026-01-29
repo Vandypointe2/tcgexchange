@@ -177,7 +177,11 @@ exports.searchCards = async (req, res) => {
 
     // API Request
     const response = await axios.get('https://api.pokemontcg.io/v2/cards', {
-      headers: { 'X-Api-Key': process.env.POKEMON_TCG_API_KEY },
+      // Note: This API appears to return 404 unless Accept is explicitly application/json.
+      headers: {
+        Accept: 'application/json',
+        'X-Api-Key': process.env.POKEMON_TCG_API_KEY
+      },
       params: {
         q: query,
         page,
@@ -200,7 +204,10 @@ exports.getCardById = async (req, res) => {
   try {
     // API Request
     const response = await axios.get(`https://api.pokemontcg.io/v2/cards/${id}`, {
-      headers: { 'X-Api-Key': process.env.POKEMON_TCG_API_KEY }
+      headers: {
+        Accept: 'application/json',
+        'X-Api-Key': process.env.POKEMON_TCG_API_KEY
+      }
     });
 
     if (response.data.count === 0 && response.data.totalCount === 0) {
