@@ -8,17 +8,17 @@
     <link rel="stylesheet" href="/styles/base.css" />
     <link rel="stylesheet" href="/styles/search.css" />
     <link rel="stylesheet" href="/styles/inventory.css" />
+    <link rel="stylesheet" href="/styles/nav.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css" />
 </head>
 
 <body>
     <div class="header">
-        <div id="theme" class="toggle"></div>
-        <div style="display:flex; gap: .5rem; align-items:center;">
-            <a href="/collection.html" class="navlink">Collection</a>
-            <a href="/wishlist.html" class="navlink">Wishlist</a>
-            <button id="logout-btn">Log Out</button>
+        <div style="display:flex; gap:.5rem; align-items:center;">
+            <div id="nav"></div>
+            <div id="theme" class="toggle"></div>
         </div>
+        <button id="logout-btn">Log Out</button>
     </div>
 
     <div class="container">
@@ -170,6 +170,7 @@
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>
     <script src="/scripts/util.js" defer></script>
     <script src="/scripts/auth.js" defer></script>
+    <script src="/scripts/nav.js" defer></script>
     <script src="/scripts/inventoryModal.js" defer></script>
     <script src="/scripts/search.js"></script>
 </body>

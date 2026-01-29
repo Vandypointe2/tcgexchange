@@ -19,6 +19,16 @@ fetch('/partials/theme-toggle.html')
         setTheme(localStorage.getItem('darkMode') === 'true');
     });
 
+// Inject hamburger nav into any page that has <div id="nav"></div>
+fetch('/partials/nav.html')
+    .then(res => res.text())
+    .then(html => {
+        const slot = document.getElementById('nav');
+        if (!slot) return;
+        slot.innerHTML = html;
+    })
+    .catch(() => {});
+
 /**
  * Request Helpers
  * 

@@ -8,16 +8,16 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/search.css" />
   <link rel="stylesheet" href="/styles/inventory.css" />
+  <link rel="stylesheet" href="/styles/nav.css" />
 </head>
 
 <body>
   <div class="header">
-    <div id="theme" class="toggle"></div>
-    <div style="display:flex; gap: .5rem; align-items:center;">
-      <a href="/search.html" class="navlink">Search</a>
-      <a href="/wishlist.html" class="navlink">Wishlist</a>
-      <button id="logout-btn">Log Out</button>
+    <div style="display:flex; gap:.5rem; align-items:center;">
+      <div id="nav"></div>
+      <div id="theme" class="toggle"></div>
     </div>
+    <button id="logout-btn">Log Out</button>
   </div>
 
   <div class="container">
@@ -29,6 +29,7 @@
 
   <script src="/scripts/util.js" defer></script>
   <script src="/scripts/auth.js" defer></script>
+  <script src="/scripts/nav.js" defer></script>
   <script src="/scripts/collection.js" defer></script>
 </body>
 
