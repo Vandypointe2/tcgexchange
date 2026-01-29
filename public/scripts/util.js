@@ -26,6 +26,8 @@ fetch('/partials/nav.html')
         const slot = document.getElementById('nav');
         if (!slot) return;
         slot.innerHTML = html;
+        // nav.js binds events; call after injection
+        if (window.initNav) window.initNav();
     })
     .catch(() => {});
 
