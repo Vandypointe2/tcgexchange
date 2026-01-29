@@ -4,6 +4,9 @@ let loading = false;
 let allCardsLoaded = false;
 let firstSearch = false;
 
+// inventory modal injected from partial
+let invModalReady = false;
+
 // Enum values for dropdowns
 const enums = {
     sets: [ // lol 
@@ -225,7 +228,10 @@ async function searchCards(page = 1, append = false) {
         </a>
         <h3>${card.name}</h3>
         <small>${card.set.ptcgoCode}: ${card.number}</small>
-        <button data-id="${card.id}">+ Collection</button>`;
+        <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+          <button data-action="add-collection" data-id="${card.id}">+ Collection</button>
+          <button data-action="add-wishlist" data-id="${card.id}">+ Wishlist</button>
+        </div>`;
             container.appendChild(cardEl);
 
             requestAnimationFrame(() => {
@@ -273,7 +279,7 @@ function populateMultiselect(id, options) {
 }
 
 // Populate multiselect dropdowns on page load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     populateMultiselect("sets", enums.sets);
     populateMultiselect("types", enums.types);
     populateMultiselect("supertypes", enums.supertypes);
@@ -282,6 +288,27 @@ document.addEventListener('DOMContentLoaded', () => {
     populateMultiselect("weaknesses", enums.types);
     populateMultiselect("resistances", enums.types);
     populateMultiselect("legalities", enums.legalities);
+
+    // inject modal
+    try {
+        const res = await fetch('/partials/inventory-modal.html');
+        const html = await res.text();
+        document.body.insertAdjacentHTML('beforeend', html);
+        invModalReady = true;
+        setupInventoryModal();
+    } catch (e) {
+        console.warn('Failed to load inventory modal', e);
+    }
+
+    // click handlers for add buttons
+    document.getElementById('card-results')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        if (!invModalReady) return;
+        const cardId = btn.dataset.id;
+        const kind = btn.dataset.action === 'add-wishlist' ? 'wishlist' : 'collection';
+        openInventoryModal({ kind, cardId });
+    });
 });
 
 // Check if at least one filter is applied

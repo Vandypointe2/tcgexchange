@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Collection</title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/search.css" />
+  <link rel="stylesheet" href="/styles/inventory.css" />
+</head>
+
+<body>
+  <div class="header">
+    <div id="theme" class="toggle"></div>
+    <div style="display:flex; gap: .5rem; align-items:center;">
+      <a href="/search.html" class="navlink">Search</a>
+      <a href="/wishlist.html" class="navlink">Wishlist</a>
+      <button id="logout-btn">Log Out</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>My Collection</h1>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="collection-list" class="card-grid"></div>
+  </div>
+
+  <script src="/scripts/util.js" defer></script>
+  <script src="/scripts/auth.js" defer></script>
+  <script src="/scripts/collection.js" defer></script>
+</body>
+
+</html>

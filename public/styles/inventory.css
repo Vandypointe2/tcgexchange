@@ -1,0 +1,15 @@
+.navlink{color:var(--text); text-decoration:none; padding:.4rem .6rem; border:1px solid rgba(255,255,255,.18); border-radius:.6rem;}
+.navlink:hover{border-color: rgba(255,255,255,.35)}
+.btn-small{padding:.35rem .6rem; border-radius:.55rem; border:1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); color: var(--text); cursor:pointer;}
+.btn-small.danger{border-color: rgba(255,70,70,.35);}
+.toast-container{position:fixed; bottom:16px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; gap:8px; z-index: 50;}
+.toast{padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.18); background: rgba(10,10,24,.85); color: var(--text);}
+.toast-success{border-color: rgba(60,255,160,.35)}
+.toast-error{border-color: rgba(255,70,70,.35)}
+.toast.fade-out{opacity:.0; transition: opacity .3s ease}
+
+/* modal */
+.inv-modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:16px; z-index:60;}
+.inv-modal[aria-hidden="false"]{display:flex}
+.inv-backdrop{position:absolute; inset:0; background: rgba(0,0,0,.65)}
+.inv-panel{position:relative; width:min(420px,100%); background: rgba(10,10,24,.95); border:1px solid rgba(255,255,255,.12); border-radius:14px; padding:14px;}
