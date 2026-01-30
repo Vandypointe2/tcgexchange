@@ -38,11 +38,20 @@ async function main() {
   let total = 0;
   let upserted = 0;
 
+  // eslint-disable-next-line global-require
+  const setConverter = require('../src/util/setConverter');
+
   for (const file of files) {
     const p = path.join(CARDS_DIR, file);
     const raw = fs.readFileSync(p, 'utf8');
     const cards = JSON.parse(raw);
     if (!Array.isArray(cards)) continue;
+
+    // The pokemon-tcg-data repo stores cards in per-set files.
+    // Some dumps include full card.set {id,name}, others omit it.
+    // Use filename as a fallback setId.
+    const setIdFromFile = path.basename(file, '.json');
+    const setNameFromFile = setConverter.getSetNameById(setIdFromFile) || null;
 
     for (const c of cards) {
       total += 1;
@@ -51,8 +60,8 @@ async function main() {
       const row = {
         id: c.id,
         name: c.name,
-        setId: c.set?.id,
-        setName: c.set?.name,
+        setId: c.set?.id || c.setId || setIdFromFile || null,
+        setName: c.set?.name || c.setName || setNameFromFile || null,
         number: c.number,
         rarity: c.rarity,
         supertype: c.supertype,
