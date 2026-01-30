@@ -36,26 +36,86 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}).filter(Boolean).join("");
 		document.getElementById("market-data").innerHTML = marketHtml || '<p>Market prices unavailable (local cache).</p>';
 
-		// Inject inventory modal + wire add buttons
-		try {
-			const res = await fetch('/partials/inventory-modal.html');
-			const html = await res.text();
-			document.body.insertAdjacentHTML('beforeend', html);
-			if (typeof setupInventoryModal === 'function') setupInventoryModal();
+		// Inline add UI: temporarily replace the two buttons with fields + submit
+		const actionsEl = document.getElementById('card-actions');
+		if (actionsEl) {
+			const originalHtml = actionsEl.innerHTML;
 
-			const addCollectionBtn = document.getElementById('add-to-collection');
-			const addWishlistBtn = document.getElementById('add-to-wishlist');
+			const renderBaseButtons = () => {
+				actionsEl.innerHTML = originalHtml;
+				wireButtons();
+			};
 
-			addCollectionBtn?.addEventListener('click', () => {
-				if (typeof openInventoryModal !== 'function') return;
-				openInventoryModal({ kind: 'collection', cardId });
-			});
-			addWishlistBtn?.addEventListener('click', () => {
-				if (typeof openInventoryModal !== 'function') return;
-				openInventoryModal({ kind: 'wishlist', cardId });
-			});
-		} catch (e) {
-			console.warn('Failed to load inventory modal', e);
+			const condOptions = ['NM', 'LP', 'MP', 'HP', 'DMG']
+				.map((c) => `<option value="${c}">${c}</option>`)
+				.join('');
+
+			const renderCollectionForm = () => {
+				actionsEl.innerHTML = `
+				  <div style="display:flex; flex-wrap:wrap; gap:.5rem; width:100%; align-items:center; justify-content:center;">
+				    <select id="inline-condition">${condOptions}</select>
+				    <input id="inline-qty" type="number" min="1" value="1" style="width:90px;" />
+				    <button id="inline-submit" class="btn-small">Add</button>
+				    <button id="inline-cancel" class="btn-small danger" type="button">Cancel</button>
+				  </div>
+				`;
+
+				document.getElementById('inline-cancel')?.addEventListener('click', renderBaseButtons);
+				document.getElementById('inline-submit')?.addEventListener('click', async (e) => {
+					e.preventDefault();
+					try {
+						const condition = document.getElementById('inline-condition')?.value || 'NM';
+						const quantity = Number(document.getElementById('inline-qty')?.value || 1);
+						await apiRequest('/collection', 'POST', { cardId, condition, quantity });
+						showToast('Added to collection', 'success');
+						renderBaseButtons();
+					} catch (err) {
+						showToast(err.message || 'Failed to add to collection', 'error');
+					}
+				});
+			};
+
+			const renderWishlistForm = () => {
+				actionsEl.innerHTML = `
+				  <div style="display:flex; flex-wrap:wrap; gap:.5rem; width:100%; align-items:center; justify-content:center;">
+				    <select id="inline-min-condition">${condOptions.replace('value="NM"', 'value="NM" selected')}</select>
+				    <input id="inline-qty" type="number" min="1" value="1" style="width:90px;" />
+				    <select id="inline-priority">${[1,2,3,4,5].map(p=>`<option value="${p}" ${p===3?'selected':''}>P${p}</option>`).join('')}</select>
+				    <button id="inline-submit" class="btn-small">Add</button>
+				    <button id="inline-cancel" class="btn-small danger" type="button">Cancel</button>
+				  </div>
+				`;
+
+				document.getElementById('inline-cancel')?.addEventListener('click', renderBaseButtons);
+				document.getElementById('inline-submit')?.addEventListener('click', async (e) => {
+					e.preventDefault();
+					try {
+						const minCondition = document.getElementById('inline-min-condition')?.value || 'LP';
+						const quantityDesired = Number(document.getElementById('inline-qty')?.value || 1);
+						const priority = Number(document.getElementById('inline-priority')?.value || 3);
+						await apiRequest('/wishlist', 'POST', { cardId, minCondition, quantityDesired, priority });
+						showToast('Added to wishlist', 'success');
+						renderBaseButtons();
+					} catch (err) {
+						showToast(err.message || 'Failed to add to wishlist', 'error');
+					}
+				});
+			};
+
+			const wireButtons = () => {
+				const addCollectionBtn = document.getElementById('add-to-collection');
+				const addWishlistBtn = document.getElementById('add-to-wishlist');
+				addCollectionBtn?.addEventListener('click', (e) => {
+					e.preventDefault();
+					renderCollectionForm();
+				});
+				addWishlistBtn?.addEventListener('click', (e) => {
+					e.preventDefault();
+					renderWishlistForm();
+				});
+			};
+
+			wireButtons();
 		}
 
 	} catch (err) {
