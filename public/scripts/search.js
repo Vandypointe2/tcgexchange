@@ -206,7 +206,9 @@ async function searchCards(page = 1, append = false) {
     loading = true;
 
     try {
-        // Prefer local search (CardCache). Fallback to external API if local is empty or errors.
+        const allowApiFallback = localStorage.getItem('allowApiFallback') === 'true';
+
+        // Prefer local search (CardCache). Optionally fall back to external API only if local returns 0.
         let data;
         try {
             data = await apiRequest('/cards/search_local', 'POST', {
@@ -215,18 +217,18 @@ async function searchCards(page = 1, append = false) {
                 pageSize,
                 sort: form.sort.value || 'name'
             });
-
-            // If local search returns nothing, try external API as a fallback.
-            if (!data?.cards || data.cards.length === 0) {
-                data = await apiRequest('/cards/search', 'POST', {
-                    filters: filters,
-                    page,
-                    pageSize,
-                    sort: form.sort.value || 'name'
-                });
-            }
         } catch (errLocal) {
-            // local failed; try external
+            if (!allowApiFallback) throw errLocal;
+            data = await apiRequest('/cards/search', 'POST', {
+                filters: filters,
+                page,
+                pageSize,
+                sort: form.sort.value || 'name'
+            });
+        }
+
+        // If local search returns nothing, optionally try external API as a fallback.
+        if (allowApiFallback && (!data?.cards || data.cards.length === 0)) {
             data = await apiRequest('/cards/search', 'POST', {
                 filters: filters,
                 page,
@@ -236,7 +238,12 @@ async function searchCards(page = 1, append = false) {
         }
 
         if (!data.cards || data.cards.length === 0) {
-            if (!append) container.innerHTML = '<p>No cards found.</p>';
+            if (!append) {
+                const allowApiFallback = localStorage.getItem('allowApiFallback') === 'true';
+                container.innerHTML = allowApiFallback
+                    ? '<p>No cards found.</p>'
+                    : '<p>No cards found (local-only search). Turn on API Fallback to broaden results.</p>';
+            }
             allCardsLoaded = true;
             return;
         }
@@ -302,6 +309,16 @@ function populateMultiselect(id, options) {
 
 // Populate multiselect dropdowns on page load
 document.addEventListener('DOMContentLoaded', async () => {
+    // API fallback toggle (persisted)
+    const apiToggle = document.getElementById('apiFallbackToggle');
+    if (apiToggle) {
+        apiToggle.checked = localStorage.getItem('allowApiFallback') === 'true';
+        apiToggle.addEventListener('change', () => {
+            localStorage.setItem('allowApiFallback', apiToggle.checked);
+            showToast(apiToggle.checked ? 'API fallback enabled' : 'Local-only search enabled', 'info');
+        });
+    }
+
     populateMultiselect("sets", enums.sets);
     populateMultiselect("types", enums.types);
     populateMultiselect("supertypes", enums.supertypes);
@@ -335,10 +352,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Check if at least one filter is applied
 function hasAtLeastOneFilter(filters) {
+    if (!filters) return false;
+
     return Object.values(filters).some(value => {
+        if (value === null || value === undefined) return false;
         if (Array.isArray(value)) return value.length > 0;
         if (typeof value === 'string') return value.trim() !== '';
         if (typeof value === 'number') return true;
+        if (typeof value === 'object') return hasAtLeastOneFilter(value);
         return false;
     });
 }

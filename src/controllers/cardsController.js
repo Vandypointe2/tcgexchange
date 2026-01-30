@@ -223,9 +223,21 @@ exports.searchCardsLocal = async (req, res) => {
       where.name = { [Op.like]: `%${filters.name.trim()}%` };
     }
 
-    // sets are provided as set names in the UI
+    // sets are provided as set *names* in the UI (e.g., "151"),
+    // but CardCache stores both setName (full name) and setId (api id like "sv3pt5").
+    // Use setConverter to map UI names -> ids when possible, and also allow direct name match.
     if (filters?.sets && Array.isArray(filters.sets) && filters.sets.length > 0) {
-      where.setName = { [Op.in]: filters.sets };
+      let setIds = [];
+      try {
+        setIds = setConverter.convertNamesToIds(filters.sets);
+      } catch (e) {
+        setIds = [];
+      }
+
+      where[Op.or] = [
+        ...(setIds.length ? [{ setId: { [Op.in]: setIds } }] : []),
+        { setName: { [Op.in]: filters.sets } }
+      ];
     }
 
     if (filters?.rarities && Array.isArray(filters.rarities) && filters.rarities.length > 0) {
