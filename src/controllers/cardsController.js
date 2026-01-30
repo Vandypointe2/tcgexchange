@@ -408,6 +408,51 @@ exports.getCardsByIds = async (req, res) => {
   }
 };
 
+// Get a card by ID from local CardCache
+exports.getCardByIdLocal = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // eslint-disable-next-line global-require
+    const { CardCache } = require('../../models');
+
+    const r = await CardCache.findByPk(id);
+    if (!r) return res.status(404).json({ error: 'Card not found (local)' });
+
+    let types;
+    let subtypes;
+    try { types = r.typesJson ? JSON.parse(r.typesJson) : undefined; } catch (e) { types = undefined; }
+    try { subtypes = r.subtypesJson ? JSON.parse(r.subtypesJson) : undefined; } catch (e) { subtypes = undefined; }
+
+    const card = {
+      id: r.id,
+      name: r.name,
+      hp: r.hp,
+      types,
+      supertype: r.supertype,
+      subtypes,
+      rarity: r.rarity,
+      number: r.number,
+      set: {
+        id: r.setId,
+        name: r.setName,
+        series: r.setSeries,
+        releaseDate: r.setReleaseDate,
+        printedTotal: r.setPrintedTotal
+      },
+      images: {
+        small: r.imageSmall,
+        large: r.imageLarge
+      }
+    };
+
+    return res.json({ card, source: 'local' });
+  } catch (err) {
+    console.error('getCardByIdLocal failed:', err);
+    return res.status(500).json({ error: 'Failed to fetch card (local)' });
+  }
+};
+
 // Get a card by ID from the external API
 exports.getCardById = async (req, res) => {
   const { id } = req.params;
