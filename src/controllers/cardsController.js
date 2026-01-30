@@ -224,19 +224,28 @@ exports.searchCardsLocal = async (req, res) => {
     }
 
     // sets are provided as set *names* in the UI (e.g., "151"),
-    // but CardCache stores both setName (full name) and setId (api id like "sv3pt5").
-    // Use setConverter to map UI names -> ids when possible, and also allow direct name match.
+    // but CardCache stores both setName (human readable) and setId (api id like "sv3pt5").
+    // Accept either names OR ids from the client to avoid mismatch issues.
     if (filters?.sets && Array.isArray(filters.sets) && filters.sets.length > 0) {
-      let setIds = [];
+      const setVals = filters.sets.map((s) => String(s).trim()).filter(Boolean);
+
+      // Convert known names -> ids via our mapping.
+      let mappedIds = [];
       try {
-        setIds = setConverter.convertNamesToIds(filters.sets);
+        mappedIds = setConverter.convertNamesToIds(setVals);
       } catch (e) {
-        setIds = [];
+        mappedIds = [];
       }
+
+      // Also treat raw values that look like ids as ids (e.g., "sv3pt5").
+      const looksLikeSetId = (x) => /^[a-z0-9]+$/i.test(x) && x.length <= 12;
+      const directIds = setVals.filter(looksLikeSetId);
+
+      const setIds = Array.from(new Set([...(mappedIds || []), ...(directIds || [])]));
 
       where[Op.or] = [
         ...(setIds.length ? [{ setId: { [Op.in]: setIds } }] : []),
-        { setName: { [Op.in]: filters.sets } }
+        { setName: { [Op.in]: setVals } }
       ];
     }
 
