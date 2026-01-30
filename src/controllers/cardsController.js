@@ -207,7 +207,7 @@ exports.searchCardsLocal = async (req, res) => {
   // eslint-disable-next-line global-require
   const { Op } = require('sequelize');
   // eslint-disable-next-line global-require
-  const { CardCache } = require('../../models');
+  const { CardCache, sequelize } = require('../../models');
 
   const {
     filters,
@@ -269,9 +269,14 @@ exports.searchCardsLocal = async (req, res) => {
     const order = [];
     if (sort === 'name') order.push(['name', 'ASC']);
     else if (sort === '-name') order.push(['name', 'DESC']);
-    else if (sort === 'number') order.push(['number', 'ASC']);
-    else if (sort === '-number') order.push(['number', 'DESC']);
-    else order.push(['name', 'ASC']);
+    else if (sort === 'number') {
+      // number is stored as TEXT; sort numerically first, then by raw string for stability.
+      order.push([sequelize.literal('CAST(number AS INTEGER)'), 'ASC']);
+      order.push(['number', 'ASC']);
+    } else if (sort === '-number') {
+      order.push([sequelize.literal('CAST(number AS INTEGER)'), 'DESC']);
+      order.push(['number', 'DESC']);
+    } else order.push(['name', 'ASC']);
 
     const limit = Math.min(Number(pageSize) || 20, 100);
     const offset = (Math.max(Number(page) || 1, 1) - 1) * limit;
