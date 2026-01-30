@@ -10,11 +10,30 @@ async function loadWishlist() {
       return;
     }
 
+    const ids = Array.from(new Set(items.map((x) => x.cardId)));
+    let cardMap = {};
+    try {
+      const resp = await apiRequest('/cards/bulk', 'POST', { ids });
+      cardMap = resp?.cards || {};
+    } catch (e) {
+      cardMap = {};
+    }
+
     items.forEach((it) => {
+      const card = cardMap[it.cardId];
+      const title = card ? `${card.name} (${it.cardId})` : it.cardId;
+      const setLabel = card?.set || 'SET';
+      const numberLabel = card?.number || '';
+      const img = card?.images?.large || card?.images?.small;
+
       const el = document.createElement('div');
       el.className = 'card';
       el.innerHTML = `
-        <h3>${it.cardId}</h3>
+        <a href="/card.html?id=${it.cardId}" class="card-link">
+          ${img ? `<img src="${img}" alt="${title}" />` : ''}
+        </a>
+        <h3>${title}</h3>
+        <small>${setLabel}${numberLabel ? `: ${numberLabel}` : ''}</small>
         <small>Min Condition: ${it.minCondition} · Qty: ${it.quantityDesired} · Priority: ${it.priority}</small>
         <div style="display:flex; flex-wrap: wrap; gap:.5rem; margin-top:.75rem;">
           <input type="number" min="1" value="${it.quantityDesired}" style="width:90px;" />
