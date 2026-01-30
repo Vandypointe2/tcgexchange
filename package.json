@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "node src/server.js",
         "lint": "eslint .",
-        "lint:fix": "eslint . --fix"
+        "lint:fix": "eslint . --fix",
+        "import:cards": "node scripts/import_cards.js"
     },
     "author": "Tim Bretz & Kyle LaPointe",
     "license": "ISC",

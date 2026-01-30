@@ -197,6 +197,73 @@ exports.searchCards = async (req, res) => {
   }
 };
 
+// Bulk card lookup (prefer local CardCache; fall back to external API for misses)
+exports.getCardsByIds = async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'ids must be a non-empty array' });
+  }
+
+  const uniqueIds = Array.from(new Set(ids)).slice(0, 250);
+
+  try {
+    // eslint-disable-next-line global-require
+    const { CardCache } = require('../../models');
+
+    const rows = await CardCache.findAll({ where: { id: uniqueIds } });
+
+    const map = {};
+    rows.forEach((r) => {
+      map[r.id] = {
+        id: r.id,
+        name: r.name,
+        set: r.setName,
+        number: r.number,
+        images: {
+          small: r.imageSmall,
+          large: r.imageLarge
+        }
+      };
+    });
+
+    const missing = uniqueIds.filter((x) => !map[x]).slice(0, 100);
+    if (missing.length === 0) {
+      return res.json({ cards: map, source: 'local' });
+    }
+
+    // External fallback
+    const q = `id:(${missing.map((x) => `\"${x}\"`).join(' OR ')})`;
+    const response = await axios.get('https://api.pokemontcg.io/v2/cards', {
+      headers: {
+        Accept: 'application/json',
+        'X-Api-Key': process.env.POKEMON_TCG_API_KEY
+      },
+      params: {
+        q,
+        page: 1,
+        pageSize: missing.length
+      }
+    });
+
+    const cards = response.data?.data || [];
+    cards.forEach((c) => {
+      map[c.id] = {
+        id: c.id,
+        name: c.name,
+        set: c.set?.name,
+        number: c.number,
+        images: c.images
+      };
+    });
+
+    return res.json({ cards: map, source: 'mixed' });
+  } catch (err) {
+    console.error('Error fetching cards by ids:', err?.response?.status || err?.message);
+    return res.status(502).json({ error: 'Failed to fetch card data' });
+  }
+};
+
 // Get a card by ID from the external API
 exports.getCardById = async (req, res) => {
   const { id } = req.params;

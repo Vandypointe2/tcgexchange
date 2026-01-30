@@ -10,8 +10,12 @@ router.post(
   cardsController.searchCards
 );
 
+// Bulk lookup endpoint (for local CardCache + fallback)
+router.post('/bulk', cardsController.getCardsByIds);
+
 router.get(
   '/:id',
   cardsController.getCardById
 );
+
 module.exports = router;
