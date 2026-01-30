@@ -197,6 +197,95 @@ exports.searchCards = async (req, res) => {
   }
 };
 
+// Local search backed by CardCache (static dataset)
+exports.searchCardsLocal = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  // eslint-disable-next-line global-require
+  const { Op } = require('sequelize');
+  // eslint-disable-next-line global-require
+  const { CardCache } = require('../../models');
+
+  const {
+    filters,
+    sort = 'name',
+    page = 1,
+    pageSize = 20
+  } = req.body;
+
+  try {
+    const where = {};
+
+    if (filters?.name && filters.name.trim() !== '') {
+      where.name = { [Op.like]: `%${filters.name.trim()}%` };
+    }
+
+    // sets are provided as set names in the UI
+    if (filters?.sets && Array.isArray(filters.sets) && filters.sets.length > 0) {
+      where.setName = { [Op.in]: filters.sets };
+    }
+
+    if (filters?.rarities && Array.isArray(filters.rarities) && filters.rarities.length > 0) {
+      where.rarity = { [Op.in]: filters.rarities };
+    }
+
+    if (filters?.supertypes && Array.isArray(filters.supertypes) && filters.supertypes.length > 0) {
+      where.supertype = { [Op.in]: filters.supertypes };
+    }
+
+    // types: stored as JSON string; simple LIKE match
+    // Example stored: ["Fire","Colorless"]
+    if (filters?.types && Array.isArray(filters.types) && filters.types.length > 0) {
+      where.typesJson = {
+        [Op.and]: filters.types.map((t) => ({ [Op.like]: `%"${t}"%` }))
+      };
+    }
+
+    // Sort mapping: allow a few fields
+    const order = [];
+    if (sort === 'name') order.push(['name', 'ASC']);
+    else if (sort === '-name') order.push(['name', 'DESC']);
+    else if (sort === 'number') order.push(['number', 'ASC']);
+    else if (sort === '-number') order.push(['number', 'DESC']);
+    else order.push(['name', 'ASC']);
+
+    const limit = Math.min(Number(pageSize) || 20, 100);
+    const offset = (Math.max(Number(page) || 1, 1) - 1) * limit;
+
+    const rows = await CardCache.findAll({
+      where,
+      limit,
+      offset,
+      order
+    });
+
+    const cards = rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      number: r.number,
+      set: {
+        name: r.setName,
+        id: r.setId,
+        ptcgoCode: r.setId
+      },
+      images: {
+        small: r.imageSmall,
+        large: r.imageLarge
+      },
+      rarity: r.rarity,
+      supertype: r.supertype
+    }));
+
+    return res.json({ cards, source: 'local' });
+  } catch (err) {
+    console.error('Local search failed:', err);
+    return res.status(500).json({ error: 'Local search failed' });
+  }
+};
+
 // Bulk card lookup (prefer local CardCache; fall back to external API for misses)
 exports.getCardsByIds = async (req, res) => {
   const { ids } = req.body;
