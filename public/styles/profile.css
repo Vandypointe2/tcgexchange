@@ -83,9 +83,23 @@ body.dark{
   margin-top: 14px;
 }
 
+/* Override global base.css label/form styles inside profile */
+.profile-card form{margin:0;}
+.profile-card label{
+  display:block;
+  justify-content: initial;
+  gap: 0;
+  text-wrap: initial;
+  font-weight: 600;
+  color: var(--sw-muted);
+}
+
+.profile-card .label span{display:block; margin: 0 0 6px; color: var(--sw-muted);}
+
 /* Inputs to match synth theme (scoped) */
 .profile-card input,
 .profile-card select{
+  width: 100%;
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,.14);
   background: rgba(10,10,24,.72);
@@ -107,7 +121,7 @@ body.dark{
 
 .profile-actions{
   display:flex;
-  justify-content:flex-end;
+  justify-content:flex-start;
   gap: 10px;
 }
 
