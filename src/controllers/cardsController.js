@@ -197,6 +197,161 @@ exports.searchCards = async (req, res) => {
   }
 };
 
+// Local search backed by CardCache (static dataset)
+exports.searchCardsLocal = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  // eslint-disable-next-line global-require
+  const { Op } = require('sequelize');
+  // eslint-disable-next-line global-require
+  const { CardCache } = require('../../models');
+
+  const {
+    filters,
+    sort = 'name',
+    page = 1,
+    pageSize = 20
+  } = req.body;
+
+  try {
+    const where = {};
+
+    if (filters?.name && filters.name.trim() !== '') {
+      where.name = { [Op.like]: `%${filters.name.trim()}%` };
+    }
+
+    // sets are provided as set names in the UI
+    if (filters?.sets && Array.isArray(filters.sets) && filters.sets.length > 0) {
+      where.setName = { [Op.in]: filters.sets };
+    }
+
+    if (filters?.rarities && Array.isArray(filters.rarities) && filters.rarities.length > 0) {
+      where.rarity = { [Op.in]: filters.rarities };
+    }
+
+    if (filters?.supertypes && Array.isArray(filters.supertypes) && filters.supertypes.length > 0) {
+      where.supertype = { [Op.in]: filters.supertypes };
+    }
+
+    // types: stored as JSON string; simple LIKE match
+    // Example stored: ["Fire","Colorless"]
+    if (filters?.types && Array.isArray(filters.types) && filters.types.length > 0) {
+      where.typesJson = {
+        [Op.and]: filters.types.map((t) => ({ [Op.like]: `%"${t}"%` }))
+      };
+    }
+
+    // Sort mapping: allow a few fields
+    const order = [];
+    if (sort === 'name') order.push(['name', 'ASC']);
+    else if (sort === '-name') order.push(['name', 'DESC']);
+    else if (sort === 'number') order.push(['number', 'ASC']);
+    else if (sort === '-number') order.push(['number', 'DESC']);
+    else order.push(['name', 'ASC']);
+
+    const limit = Math.min(Number(pageSize) || 20, 100);
+    const offset = (Math.max(Number(page) || 1, 1) - 1) * limit;
+
+    const rows = await CardCache.findAll({
+      where,
+      limit,
+      offset,
+      order
+    });
+
+    const cards = rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      number: r.number,
+      set: {
+        name: r.setName,
+        id: r.setId,
+        ptcgoCode: r.setId
+      },
+      images: {
+        small: r.imageSmall,
+        large: r.imageLarge
+      },
+      rarity: r.rarity,
+      supertype: r.supertype
+    }));
+
+    return res.json({ cards, source: 'local' });
+  } catch (err) {
+    console.error('Local search failed:', err);
+    return res.status(500).json({ error: 'Local search failed' });
+  }
+};
+
+// Bulk card lookup (prefer local CardCache; fall back to external API for misses)
+exports.getCardsByIds = async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'ids must be a non-empty array' });
+  }
+
+  const uniqueIds = Array.from(new Set(ids)).slice(0, 250);
+
+  try {
+    // eslint-disable-next-line global-require
+    const { CardCache } = require('../../models');
+
+    const rows = await CardCache.findAll({ where: { id: uniqueIds } });
+
+    const map = {};
+    rows.forEach((r) => {
+      map[r.id] = {
+        id: r.id,
+        name: r.name,
+        set: r.setName,
+        number: r.number,
+        images: {
+          small: r.imageSmall,
+          large: r.imageLarge
+        }
+      };
+    });
+
+    const missing = uniqueIds.filter((x) => !map[x]).slice(0, 100);
+    if (missing.length === 0) {
+      return res.json({ cards: map, source: 'local' });
+    }
+
+    const q = `id:(${missing.map((x) => `\"${x}\"`).join(' OR ')})`;
+    const response = await axios.get('https://api.pokemontcg.io/v2/cards', {
+      headers: {
+        Accept: 'application/json',
+        'X-Api-Key': process.env.POKEMON_TCG_API_KEY
+      },
+      params: {
+        q,
+        page: 1,
+        pageSize: missing.length
+      }
+    });
+
+    const cards = response.data?.data || [];
+    cards.forEach((c) => {
+      map[c.id] = {
+        id: c.id,
+        name: c.name,
+        set: c.set?.name,
+        number: c.number,
+        images: c.images
+      };
+    });
+
+    return res.json({ cards: map, source: 'mixed' });
+  } catch (err) {
+    console.error('Error fetching cards by ids:', err?.response?.status || err?.message);
+    return res.status(502).json({ error: 'Failed to fetch card data' });
+  }
+};
+
 // Get a card by ID from the external API
 exports.getCardById = async (req, res) => {
   const { id } = req.params;

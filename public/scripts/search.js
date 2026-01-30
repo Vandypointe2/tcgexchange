@@ -206,12 +206,34 @@ async function searchCards(page = 1, append = false) {
     loading = true;
 
     try {
-        const data = await apiRequest('/cards/search', 'POST', {
-            filters: filters,
-            page,
-            pageSize,
-            sort: form.sort.value || 'name'
-        });
+        // Prefer local search (CardCache). Fallback to external API if local is empty or errors.
+        let data;
+        try {
+            data = await apiRequest('/cards/search_local', 'POST', {
+                filters: filters,
+                page,
+                pageSize,
+                sort: form.sort.value || 'name'
+            });
+
+            // If local search returns nothing, try external API as a fallback.
+            if (!data?.cards || data.cards.length === 0) {
+                data = await apiRequest('/cards/search', 'POST', {
+                    filters: filters,
+                    page,
+                    pageSize,
+                    sort: form.sort.value || 'name'
+                });
+            }
+        } catch (errLocal) {
+            // local failed; try external
+            data = await apiRequest('/cards/search', 'POST', {
+                filters: filters,
+                page,
+                pageSize,
+                sort: form.sort.value || 'name'
+            });
+        }
 
         if (!data.cards || data.cards.length === 0) {
             if (!append) container.innerHTML = '<p>No cards found.</p>';
@@ -227,7 +249,7 @@ async function searchCards(page = 1, append = false) {
             <img src="${card.images.large}" alt="${card.name}" />
         </a>
         <h3>${card.name}</h3>
-        <small>${card.set.ptcgoCode}: ${card.number}</small>
+        <small>${(card.set && (card.set.ptcgoCode || card.set.name)) ? (card.set.ptcgoCode || card.set.name) : 'SET'}: ${card.number || ''}</small>
         <div style="display:flex; gap:.5rem; margin-top:.5rem;">
           <button data-action="add-collection" data-id="${card.id}">+ Collection</button>
           <button data-action="add-wishlist" data-id="${card.id}">+ Wishlist</button>
