@@ -307,6 +307,40 @@ exports.searchCardsLocal = async (req, res) => {
   }
 };
 
+// List sets from local CardCache (for populating the Sets filter UI)
+exports.listSetsLocal = async (req, res) => {
+  try {
+    // eslint-disable-next-line global-require
+    const { Op } = require('sequelize');
+    // eslint-disable-next-line global-require
+    const { CardCache } = require('../../models');
+
+    const rows = await CardCache.findAll({
+      attributes: ['setId', 'setName'],
+      where: {
+        setId: { [Op.not]: null }
+      },
+      group: ['setId', 'setName'],
+      order: [['setName', 'ASC']]
+    });
+
+    const sets = rows
+      .map((r) => ({
+        id: r.setId,
+        name: r.setName || r.setId
+      }))
+      // avoid blanks
+      .filter((s) => s.id && s.id.trim() !== '')
+      // stable sort if some names are null
+      .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
+    return res.json({ sets });
+  } catch (err) {
+    console.error('listSetsLocal failed:', err);
+    return res.status(500).json({ error: 'Failed to list sets' });
+  }
+};
+
 // Bulk card lookup (prefer local CardCache; fall back to external API for misses)
 exports.getCardsByIds = async (req, res) => {
   const { ids } = req.body;
