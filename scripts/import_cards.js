@@ -23,6 +23,57 @@ function safeJson(x) {
   try { return JSON.stringify(x); } catch (e) { return null; }
 }
 
+function loadSetMetaMap(dataDir) {
+  // Returns map: setId -> { id, name, series, releaseDate, printedTotal }
+  // Supports either sets/en.json or sets/en/*.json.
+  const map = {};
+
+  const setsRoot = path.join(dataDir, 'sets');
+  const setsEnJson = path.join(setsRoot, 'en.json');
+  const setsEnDir = path.join(setsRoot, 'en');
+
+  try {
+    if (fs.existsSync(setsEnJson)) {
+      const raw = fs.readFileSync(setsEnJson, 'utf8');
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) {
+        arr.forEach((s) => {
+          if (!s?.id) return;
+          map[s.id] = {
+            id: s.id,
+            name: s.name,
+            series: s.series,
+            releaseDate: s.releaseDate,
+            printedTotal: s.printedTotal
+          };
+        });
+      }
+      return map;
+    }
+
+    if (fs.existsSync(setsEnDir)) {
+      const files = fs.readdirSync(setsEnDir).filter((f) => f.endsWith('.json'));
+      files.forEach((f) => {
+        const p = path.join(setsEnDir, f);
+        const raw = fs.readFileSync(p, 'utf8');
+        const s = JSON.parse(raw);
+        if (!s?.id) return;
+        map[s.id] = {
+          id: s.id,
+          name: s.name,
+          series: s.series,
+          releaseDate: s.releaseDate,
+          printedTotal: s.printedTotal
+        };
+      });
+    }
+  } catch (e) {
+    // ignore; we'll just have an empty map
+  }
+
+  return map;
+}
+
 async function main() {
   if (!fs.existsSync(CARDS_DIR)) {
     console.error(`Cards directory not found: ${CARDS_DIR}`);
@@ -40,6 +91,7 @@ async function main() {
 
   // eslint-disable-next-line global-require
   const setConverter = require('../src/util/setConverter');
+  const setMetaMap = loadSetMetaMap(DATA_DIR);
 
   for (const file of files) {
     const p = path.join(CARDS_DIR, file);
@@ -51,20 +103,24 @@ async function main() {
     // Some dumps include full card.set {id,name,...}, others omit it.
     // Use filename as a fallback setId.
     const setIdFromFile = path.basename(file, '.json');
-    const setNameFromFile = setConverter.getSetNameById(setIdFromFile) || null;
+    const setMetaFromFile = setMetaMap[setIdFromFile] || null;
+    const setNameFromFile = setMetaFromFile?.name || setConverter.getSetNameById(setIdFromFile) || null;
 
     for (const c of cards) {
       total += 1;
       if (!c || !c.id || !c.name) continue;
 
+      const finalSetId = c.set?.id || c.setId || setIdFromFile || null;
+      const meta = (finalSetId && setMetaMap[finalSetId]) ? setMetaMap[finalSetId] : setMetaFromFile;
+
       const row = {
         id: c.id,
         name: c.name,
-        setId: c.set?.id || c.setId || setIdFromFile || null,
-        setName: c.set?.name || c.setName || setNameFromFile || null,
-        setSeries: c.set?.series || c.setSeries || null,
-        setReleaseDate: c.set?.releaseDate || c.setReleaseDate || null,
-        setPrintedTotal: (c.set?.printedTotal ?? c.setPrintedTotal) ?? null,
+        setId: finalSetId,
+        setName: c.set?.name || c.setName || meta?.name || setNameFromFile || null,
+        setSeries: c.set?.series || c.setSeries || meta?.series || null,
+        setReleaseDate: c.set?.releaseDate || c.setReleaseDate || meta?.releaseDate || null,
+        setPrintedTotal: (c.set?.printedTotal ?? c.setPrintedTotal ?? meta?.printedTotal) ?? null,
         number: c.number,
         hp: c.hp || null,
         rarity: c.rarity,
