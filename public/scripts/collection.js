@@ -10,13 +10,33 @@ async function loadCollection() {
       return;
     }
 
+    // bulk lookup for name/images
+    const ids = Array.from(new Set(items.map((x) => x.cardId)));
+    let cardMap = {};
+    try {
+      const resp = await apiRequest('/cards/bulk', 'POST', { ids });
+      cardMap = resp?.cards || {};
+    } catch (e) {
+      cardMap = {};
+    }
+
     items.forEach((it) => {
+      const card = cardMap[it.cardId];
+      const title = card ? `${card.name} (${it.cardId})` : it.cardId;
+      const setLabel = card?.set || 'SET';
+      const numberLabel = card?.number || '';
+      const img = card?.images?.large || card?.images?.small;
+
       const el = document.createElement('div');
       el.className = 'card';
       el.innerHTML = `
-        <h3>${it.cardId}</h3>
+        <a href="/card.html?id=${it.cardId}" class="card-link">
+          ${img ? `<img src="${img}" alt="${title}" />` : ''}
+        </a>
+        <h3>${title}</h3>
+        <small>${setLabel}${numberLabel ? `: ${numberLabel}` : ''}</small>
         <small>Condition: ${it.condition} · Qty: ${it.quantity}</small>
-        <div style="display:flex; gap:.5rem; margin-top:.75rem;">
+        <div style="display:flex; gap:.5rem; margin-top:.75rem; flex-wrap: wrap;">
           <input type="number" min="1" value="${it.quantity}" style="width:90px;" />
           <select>
             ${['NM','LP','MP','HP','DMG'].map(c => `<option value="${c}" ${c===it.condition?'selected':''}>${c}</option>`).join('')}
