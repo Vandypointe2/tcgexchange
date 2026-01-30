@@ -36,6 +36,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}).filter(Boolean).join("");
 		document.getElementById("market-data").innerHTML = marketHtml || '<p>Market prices unavailable (local cache).</p>';
 
+		// Inject inventory modal + wire add buttons
+		try {
+			const res = await fetch('/partials/inventory-modal.html');
+			const html = await res.text();
+			document.body.insertAdjacentHTML('beforeend', html);
+			if (typeof setupInventoryModal === 'function') setupInventoryModal();
+
+			const addCollectionBtn = document.getElementById('add-to-collection');
+			const addWishlistBtn = document.getElementById('add-to-wishlist');
+
+			addCollectionBtn?.addEventListener('click', () => {
+				if (typeof openInventoryModal !== 'function') return;
+				openInventoryModal({ kind: 'collection', cardId });
+			});
+			addWishlistBtn?.addEventListener('click', () => {
+				if (typeof openInventoryModal !== 'function') return;
+				openInventoryModal({ kind: 'wishlist', cardId });
+			});
+		} catch (e) {
+			console.warn('Failed to load inventory modal', e);
+		}
+
 	} catch (err) {
 		console.error("Failed to fetch card:", err);
 	}
