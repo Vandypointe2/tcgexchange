@@ -1,35 +1,66 @@
 /**
- * Dark Mode
+ * Persistent Header + Dark Mode + Nav Injection
  */
+
 function setTheme(isDark) {
     document.body.classList.toggle('dark', isDark);
     localStorage.setItem('darkMode', isDark);
-    document.getElementById('themeToggle').checked = isDark;
+    const toggle = document.getElementById('themeToggle');
+    if (toggle) toggle.checked = isDark;
 }
 
-fetch('/partials/theme-toggle.html')
-    .then(res => res.text())
-    .then(html => {
-        document.getElementById('theme').innerHTML = html;
+async function injectHeaderIfNeeded() {
+    const slot = document.getElementById('header');
+    if (!slot) return;
 
-        document.getElementById('themeToggle').addEventListener('change', (e) => {
-            setTheme(e.target.checked);
-        });
+    const res = await fetch('/partials/header.html');
+    const html = await res.text();
+    slot.innerHTML = html;
 
-        setTheme(localStorage.getItem('darkMode') === 'true');
+    // Hide logout if there's no token (login/register pages)
+    const token = localStorage.getItem('token');
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn && !token) logoutBtn.style.display = 'none';
+}
+
+async function injectThemeToggle() {
+    const themeSlot = document.getElementById('theme');
+    if (!themeSlot) return;
+
+    const res = await fetch('/partials/theme-toggle.html');
+    const html = await res.text();
+    themeSlot.innerHTML = html;
+
+    document.getElementById('themeToggle')?.addEventListener('change', (e) => {
+        setTheme(e.target.checked);
     });
 
-// Inject hamburger nav into any page that has <div id="nav"></div>
-fetch('/partials/nav.html')
-    .then(res => res.text())
-    .then(html => {
-        const slot = document.getElementById('nav');
-        if (!slot) return;
-        slot.innerHTML = html;
-        // nav.js binds events; call after injection
-        if (window.initNav) window.initNav();
-    })
-    .catch(() => {});
+    setTheme(localStorage.getItem('darkMode') === 'true');
+}
+
+async function injectNav() {
+    const navSlot = document.getElementById('nav');
+    if (!navSlot) return;
+
+    const res = await fetch('/partials/nav.html');
+    const html = await res.text();
+    navSlot.innerHTML = html;
+
+    // nav.js binds events; call after injection
+    if (window.initNav) window.initNav();
+}
+
+(async () => {
+    try {
+        await injectHeaderIfNeeded();
+    } catch (e) {
+        // ignore
+    }
+
+    // Order matters: header needs to exist before injecting theme/nav
+    try { await injectThemeToggle(); } catch (e) { /* ignore */ }
+    try { await injectNav(); } catch (e) { /* ignore */ }
+})();
 
 /**
  * Request Helpers

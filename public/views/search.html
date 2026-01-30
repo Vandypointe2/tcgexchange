@@ -13,21 +13,16 @@
 </head>
 
 <body>
-    <div class="header">
-        <div style="display:flex; gap:.75rem; align-items:center; flex-wrap: wrap;">
-            <div id="nav"></div>
-            <div id="theme" class="toggle"></div>
-            <div id="apiFallback" class="toggle">
-                <span>API Fallback</span>
-                <input type="checkbox" id="apiFallbackToggle" />
-                <label for="apiFallbackToggle" title="Allow fallback to external API when local search has no results"></label>
-            </div>
-        </div>
-        <button id="logout-btn">Log Out</button>
-    </div>
+    <div id="header"></div>
 
     <div class="container">
         <h1>Card Search</h1>
+
+        <div id="apiFallback" class="toggle" style="justify-content:center; margin-bottom: 1rem;">
+            <span>API Fallback</span>
+            <input type="checkbox" id="apiFallbackToggle" />
+            <label for="apiFallbackToggle" title="Allow fallback to external API when local search has no results"></label>
+        </div>
 
         <form id="search-form">
             <!-- Card Name -->
