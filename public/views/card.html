@@ -6,11 +6,15 @@
     <title>Card Details</title>
     <link rel="stylesheet" href="/styles/base.css">
     <link rel="stylesheet" href="/styles/card.css">
+    <link rel="stylesheet" href="/styles/nav.css" />
 </head>
 
 <body>
     <div class="header">
-        <div id="theme" class="toggle"></div>
+        <div style="display:flex; gap:.5rem; align-items:center;">
+            <div id="nav"></div>
+            <div id="theme" class="toggle"></div>
+        </div>
         <button id="logout-btn">Log Out</button>
     </div>
 
@@ -54,8 +58,9 @@
         </main>
     </div>
 
-    <script src="/scripts/util.js"></script>
-    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/util.js" defer></script>
+    <script src="/scripts/auth.js" defer></script>
+    <script src="/scripts/nav.js" defer></script>
     <script src="/scripts/card.js" defer></script>
 </body>
 
