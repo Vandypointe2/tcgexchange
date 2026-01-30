@@ -138,6 +138,9 @@ dist
 # sqlite3
 *.sqlite
 
+# large static dataset (downloaded locally)
+data/pokemon-tcg-data/
+
 # vscode workspace
 .vscode/
 *.code-workspace

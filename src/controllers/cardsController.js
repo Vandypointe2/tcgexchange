@@ -321,6 +321,7 @@ exports.getCardsByIds = async (req, res) => {
       return res.json({ cards: map, source: 'local' });
     }
 
+    // External fallback
     const q = `id:(${missing.map((x) => `\"${x}\"`).join(' OR ')})`;
     const response = await axios.get('https://api.pokemontcg.io/v2/cards', {
       headers: {
