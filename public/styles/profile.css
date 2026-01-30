@@ -1,0 +1,137 @@
+/* Clean modern profile styling (dark-mode friendly) */
+
+/* This file is scoped to the Profile page via profile.html */
+
+.profile-wrap{
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* Use existing base.css theme variables */
+.profile-card{
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.10);
+  text-align: left;
+}
+
+body.dark .profile-card{
+  box-shadow: 0 18px 44px rgba(0,0,0,.35);
+}
+
+.profile-grid{
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 820px){
+  .profile-grid{ grid-template-columns: 1fr; }
+}
+
+.profile-header{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+}
+
+.profile-avatar{
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.06);
+}
+
+.profile-username{
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.profile-meta{
+  color: var(--link);
+  font-size: .9rem;
+}
+
+.profile-panel-title{
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.profile-section{
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+/* Override global base.css label/form styles inside profile */
+.profile-card form{margin:0;}
+.profile-card label{
+  display:block;
+  justify-content: initial;
+  gap: 0;
+  text-wrap: initial;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.profile-card .label span{display:block; margin: 0 0 6px; color: var(--text); opacity: .9;}
+
+.profile-card input,
+.profile-card select{
+  width: 100%;
+}
+
+.profile-help{
+  color: var(--link);
+  font-size: .85rem;
+  margin-top: 6px;
+}
+
+.profile-actions{
+  display:flex;
+  justify-content:flex-start;
+  gap: 10px;
+}
+
+/* Buttons: reuse existing button colors but provide a secondary variant */
+.profile-btn-primary{
+  padding: .65rem 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  background-color: var(--button-bg);
+  color: white;
+}
+
+.profile-btn-primary:hover{ background-color: var(--button-hover); }
+
+.profile-btn-ghost{
+  padding: .65rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.profile-badge{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  font-size: .85rem;
+  color: var(--link);
+}
+
+.profile-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--highlight);
+}

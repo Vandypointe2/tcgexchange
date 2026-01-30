@@ -3,8 +3,10 @@ async function loadProfile() {
   document.getElementById('currentUsername').textContent = me.username;
   document.getElementById('currentUserId').textContent = me.id;
 
-  const avatar = me.avatarUrl || 'https://www.gravatar.com/avatar/?d=mp&f=y';
-  document.getElementById('avatarPreview').src = avatar;
+  const avatarEl = document.getElementById('avatarPreview');
+  const fallback = 'https://www.gravatar.com/avatar/?d=mp&f=y';
+  avatarEl.onerror = () => { avatarEl.src = fallback; };
+  avatarEl.src = me.avatarUrl || fallback;
 
   document.getElementById('username').value = me.username || '';
   document.getElementById('avatarUrl').value = me.avatarUrl || '';
@@ -31,7 +33,8 @@ function wireProfileForm() {
   const avatarUrlInput = document.getElementById('avatarUrl');
   avatarUrlInput.addEventListener('input', () => {
     const v = avatarUrlInput.value.trim();
-    document.getElementById('avatarPreview').src = v || 'https://www.gravatar.com/avatar/?d=mp&f=y';
+    const avatarEl = document.getElementById('avatarPreview');
+    avatarEl.src = v || 'https://www.gravatar.com/avatar/?d=mp&f=y';
   });
 }
 

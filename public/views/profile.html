@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/styles/search.css" />
   <link rel="stylesheet" href="/styles/inventory.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
+  <link rel="stylesheet" href="/styles/profile.css" />
 </head>
 
 <body>
@@ -21,62 +22,82 @@
   </div>
 
   <div class="container">
-    <h1>Profile</h1>
-    <div id="toast-container" class="toast-container"></div>
+    <div class="profile-wrap">
+      <h1>Profile</h1>
+      <div id="toast-container" class="toast-container"></div>
 
-    <div class="card loaded" style="padding: 1rem; max-width: 720px; margin: 0 auto;">
-      <h2 style="margin-top:0;">Account</h2>
+      <div class="profile-card">
+        <div class="profile-grid">
+          <!-- Left column -->
+          <div>
+            <div class="profile-header">
+              <img id="avatarPreview" class="profile-avatar" alt="avatar" />
+              <div>
+                <div class="profile-meta">Username</div>
+                <div id="currentUsername" class="profile-username"></div>
+                <div class="profile-meta">User ID: <span id="currentUserId"></span></div>
+                <div class="profile-badge" style="margin-top:8px;">
+                  <span class="profile-dot"></span>
+                  <span>Neon profile</span>
+                </div>
+              </div>
+            </div>
 
-      <div style="display:flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-        <img id="avatarPreview" alt="avatar" style="width:72px; height:72px; border-radius: 14px; object-fit: cover; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);" />
-        <div style="flex:1; min-width: 240px;">
-          <div style="color: rgba(255,255,255,.75); font-size:.9rem;">Username</div>
-          <div id="currentUsername" style="font-size:1.2rem; font-weight:700;"></div>
-          <div style="color: rgba(255,255,255,.55); font-size:.85rem;">User ID: <span id="currentUserId"></span></div>
+            <div class="profile-section">
+              <div class="profile-panel-title">Quick notes</div>
+              <div class="profile-meta">• Username is your login + display name</div>
+              <div class="profile-meta">• Avatar is a URL only (no uploads)</div>
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div>
+            <div class="profile-panel-title">Update username / avatar URL</div>
+            <form id="profileForm" class="form">
+              <label class="label">
+                <span>Username</span>
+                <input id="username" placeholder="new_username" />
+                <div class="profile-help">Letters, numbers, underscore. Min 3 chars.</div>
+              </label>
+
+              <label class="label">
+                <span>Avatar Image URL (optional)</span>
+                <input id="avatarUrl" placeholder="https://..." />
+                <div class="profile-help">We store only the URL — not the image.</div>
+              </label>
+
+              <div class="profile-actions">
+                <button class="profile-btn-primary" type="submit">Save Profile</button>
+              </div>
+            </form>
+
+            <div class="profile-section">
+              <div class="profile-panel-title">Change password</div>
+              <form id="passwordForm" class="form">
+                <label class="label">
+                  <span>Current password</span>
+                  <input id="currentPassword" type="password" autocomplete="current-password" />
+                </label>
+
+                <label class="label">
+                  <span>New password</span>
+                  <input id="newPassword" type="password" autocomplete="new-password" />
+                  <div class="profile-help">Min 10 characters.</div>
+                </label>
+
+                <label class="label">
+                  <span>Confirm new password</span>
+                  <input id="confirmPassword" type="password" autocomplete="new-password" />
+                </label>
+
+                <div class="profile-actions">
+                  <button class="profile-btn-primary" type="submit">Update Password</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
-
-      <hr style="border:0; border-top:1px solid rgba(255,255,255,.10); margin: 1rem 0;" />
-
-      <h3>Update username / avatar URL</h3>
-      <form id="profileForm" class="form">
-        <label class="label">
-          <span>Username</span>
-          <input id="username" class="input" placeholder="new_username" />
-          <small style="color: rgba(255,255,255,.55);">Letters, numbers, underscore. Min 3 chars.</small>
-        </label>
-
-        <label class="label">
-          <span>Avatar Image URL (optional)</span>
-          <input id="avatarUrl" class="input" placeholder="https://..." />
-          <small style="color: rgba(255,255,255,.55);">We store only the URL — not the image.</small>
-        </label>
-
-        <button class="btn-small" type="submit">Save Profile</button>
-      </form>
-
-      <hr style="border:0; border-top:1px solid rgba(255,255,255,.10); margin: 1rem 0;" />
-
-      <h3>Change password</h3>
-      <form id="passwordForm" class="form">
-        <label class="label">
-          <span>Current password</span>
-          <input id="currentPassword" class="input" type="password" autocomplete="current-password" />
-        </label>
-
-        <label class="label">
-          <span>New password</span>
-          <input id="newPassword" class="input" type="password" autocomplete="new-password" />
-          <small style="color: rgba(255,255,255,.55);">Min 10 characters.</small>
-        </label>
-
-        <label class="label">
-          <span>Confirm new password</span>
-          <input id="confirmPassword" class="input" type="password" autocomplete="new-password" />
-        </label>
-
-        <button class="btn-small" type="submit">Update Password</button>
-      </form>
     </div>
   </div>
 
