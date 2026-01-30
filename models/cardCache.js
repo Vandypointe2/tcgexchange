@@ -10,12 +10,16 @@ module.exports = (sequelize, DataTypes) => {
     setId: { type: DataTypes.STRING, allowNull: true },
     setName: { type: DataTypes.STRING, allowNull: true },
     number: { type: DataTypes.STRING, allowNull: true },
+    hp: { type: DataTypes.STRING, allowNull: true },
     rarity: { type: DataTypes.STRING, allowNull: true },
     supertype: { type: DataTypes.STRING, allowNull: true },
     subtypesJson: { type: DataTypes.TEXT, allowNull: true },
     typesJson: { type: DataTypes.TEXT, allowNull: true },
     imageSmall: { type: DataTypes.STRING, allowNull: true },
-    imageLarge: { type: DataTypes.STRING, allowNull: true }
+    imageLarge: { type: DataTypes.STRING, allowNull: true },
+    setSeries: { type: DataTypes.STRING, allowNull: true },
+    setReleaseDate: { type: DataTypes.STRING, allowNull: true },
+    setPrintedTotal: { type: DataTypes.INTEGER, allowNull: true }
   }, {
     tableName: 'CardCaches'
   });
