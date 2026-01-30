@@ -17,6 +17,9 @@ router.post(
   cardsController.searchCardsLocal
 );
 
+// List sets from local CardCache
+router.get('/sets_local', cardsController.listSetsLocal);
+
 // Bulk lookup endpoint (prefer local CardCache; external fallback for misses)
 router.post('/bulk', cardsController.getCardsByIds);
 

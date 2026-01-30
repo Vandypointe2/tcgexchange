@@ -307,6 +307,19 @@ function populateMultiselect(id, options) {
     });
 }
 
+// Populate sets dropdown from local DB (CardCache)
+function populateSetsFromDb(sets) {
+    const container = document.getElementById('sets');
+    if (!container) return;
+    container.innerHTML = '';
+    sets.forEach((s) => {
+        const option = document.createElement('option');
+        option.value = s.id; // IMPORTANT: use setId as value
+        option.textContent = s.name || s.id;
+        container.appendChild(option);
+    });
+}
+
 // Populate multiselect dropdowns on page load
 document.addEventListener('DOMContentLoaded', async () => {
     // API fallback toggle (persisted)
@@ -319,7 +332,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    populateMultiselect("sets", enums.sets);
+    // Sets: load from local DB to guarantee the filter matches CardCache
+    try {
+        const resp = await apiRequest('/cards/sets_local');
+        if (resp?.sets && Array.isArray(resp.sets) && resp.sets.length > 0) {
+            populateSetsFromDb(resp.sets);
+        } else {
+            // fallback to hardcoded list (values will be set names)
+            populateMultiselect("sets", enums.sets);
+        }
+    } catch (e) {
+        populateMultiselect("sets", enums.sets);
+    }
+
     populateMultiselect("types", enums.types);
     populateMultiselect("supertypes", enums.supertypes);
     populateMultiselect("rarities", enums.rarities);
