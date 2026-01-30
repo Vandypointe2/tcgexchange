@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/search.css" />
+  <link rel="stylesheet" href="/styles/inventory.css" />
+  <link rel="stylesheet" href="/styles/nav.css" />
+</head>
+
+<body>
+  <div class="header">
+    <div style="display:flex; gap:.5rem; align-items:center;">
+      <div id="nav"></div>
+      <div id="theme" class="toggle"></div>
+    </div>
+    <button id="logout-btn">Log Out</button>
+  </div>
+
+  <div class="container">
+    <h1>Profile</h1>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="card" style="padding: 1rem; max-width: 720px; margin: 0 auto;">
+      <h2 style="margin-top:0;">Account</h2>
+
+      <div style="display:flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <img id="avatarPreview" alt="avatar" style="width:72px; height:72px; border-radius: 14px; object-fit: cover; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);" />
+        <div style="flex:1; min-width: 240px;">
+          <div style="color: rgba(255,255,255,.75); font-size:.9rem;">Username</div>
+          <div id="currentUsername" style="font-size:1.2rem; font-weight:700;"></div>
+          <div style="color: rgba(255,255,255,.55); font-size:.85rem;">User ID: <span id="currentUserId"></span></div>
+        </div>
+      </div>
+
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,.10); margin: 1rem 0;" />
+
+      <h3>Update username / avatar URL</h3>
+      <form id="profileForm" class="form">
+        <label class="label">
+          <span>Username</span>
+          <input id="username" class="input" placeholder="new_username" />
+          <small style="color: rgba(255,255,255,.55);">Letters, numbers, underscore. Min 3 chars.</small>
+        </label>
+
+        <label class="label">
+          <span>Avatar Image URL (optional)</span>
+          <input id="avatarUrl" class="input" placeholder="https://..." />
+          <small style="color: rgba(255,255,255,.55);">We store only the URL — not the image.</small>
+        </label>
+
+        <button class="btn-small" type="submit">Save Profile</button>
+      </form>
+
+      <hr style="border:0; border-top:1px solid rgba(255,255,255,.10); margin: 1rem 0;" />
+
+      <h3>Change password</h3>
+      <form id="passwordForm" class="form">
+        <label class="label">
+          <span>Current password</span>
+          <input id="currentPassword" class="input" type="password" autocomplete="current-password" />
+        </label>
+
+        <label class="label">
+          <span>New password</span>
+          <input id="newPassword" class="input" type="password" autocomplete="new-password" />
+          <small style="color: rgba(255,255,255,.55);">Min 10 characters.</small>
+        </label>
+
+        <label class="label">
+          <span>Confirm new password</span>
+          <input id="confirmPassword" class="input" type="password" autocomplete="new-password" />
+        </label>
+
+        <button class="btn-small" type="submit">Update Password</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/scripts/util.js" defer></script>
+  <script src="/scripts/auth.js" defer></script>
+  <script src="/scripts/nav.js" defer></script>
+  <script src="/scripts/profile.js" defer></script>
+</body>
+
+</html>
