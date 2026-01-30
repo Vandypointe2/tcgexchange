@@ -1,4 +1,3 @@
-<!-- public/signup.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,12 +7,13 @@
   <title>Sign Up</title>
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/login.css" />
+  <link rel="stylesheet" href="/styles/nav.css" />
 </head>
 
 <body>
-  <div class="container">
-    <div id="theme" class="toggle"></div>
+  <div id="header"></div>
 
+  <div class="container">
     <h1>Create Account</h1>
 
     <form id="signup-form">
@@ -22,11 +22,12 @@
       <button type="submit">Sign Up</button>
     </form>
 
-    <a class="small-link" href="/login.html">Already have an account? Log in</a>
+    <a class="small-link" href="/login.html">Already have a user? Log in</a>
   </div>
 
-  <script src="/scripts/register.js"></script>
   <script src="/scripts/util.js" defer></script>
+  <script src="/scripts/nav.js" defer></script>
+  <script src="/scripts/register.js" defer></script>
 </body>
 
 </html>
