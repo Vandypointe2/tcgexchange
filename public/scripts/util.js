@@ -9,6 +9,14 @@ function setTheme(isDark) {
     if (toggle) toggle.checked = isDark;
 }
 
+function applyCardSize(size) {
+    const root = document.documentElement;
+    // affects grid min width (overall card size)
+    if (size === 'sm') root.style.setProperty('--card-min-width', '150px');
+    else if (size === 'lg') root.style.setProperty('--card-min-width', '260px');
+    else root.style.setProperty('--card-min-width', '190px');
+}
+
 async function injectHeaderIfNeeded() {
     const slot = document.getElementById('header');
     if (!slot) return;
@@ -30,6 +38,21 @@ async function injectHeaderIfNeeded() {
             localStorage.removeItem('token');
             window.location.href = '/login.html';
         });
+    }
+
+    // Card size toggle (persisted)
+    const sel = document.getElementById('cardSizeSelect');
+    if (sel) {
+        const saved = localStorage.getItem('cardImageSize') || 'md';
+        sel.value = saved;
+        applyCardSize(saved);
+        sel.addEventListener('change', () => {
+            localStorage.setItem('cardImageSize', sel.value);
+            applyCardSize(sel.value);
+        });
+    } else {
+        // still apply if header isn't present for some reason
+        applyCardSize(localStorage.getItem('cardImageSize') || 'md');
     }
 }
 
