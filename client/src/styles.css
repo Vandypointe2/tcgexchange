@@ -109,9 +109,7 @@
 
 .card-grid {
   display: grid;
-  grid-template-columns: var(
-    --card-grid-template,
-    repeat(auto-fit, minmax(var(--card-min), 1fr))
-  );
+  /* Responsive: if tiles can't fit, grid naturally falls back to fewer columns */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--card-min)), 1fr));
   gap: 12px;
 }
