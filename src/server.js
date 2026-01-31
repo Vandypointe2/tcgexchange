@@ -7,6 +7,7 @@ const usersRoutes = require('./routes/users');
 const cardRoutes = require('./routes/cards');
 const collectionRoutes = require('./routes/collection');
 const wishlistRoutes = require('./routes/wishlist');
+const tradeRoutes = require('./routes/trades');
 
 const PORT = process.env.PORT || 3000;
 
@@ -20,6 +21,7 @@ app.use('/auth', usersRoutes);
 app.use('/cards', cardRoutes);
 app.use('/collection', collectionRoutes);
 app.use('/wishlist', wishlistRoutes);
+app.use('/trades', tradeRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

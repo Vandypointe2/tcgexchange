@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trades</title>
+  <link rel="stylesheet" href="/styles/base.css" />
+  <link rel="stylesheet" href="/styles/nav.css" />
+  <link rel="stylesheet" href="/styles/search.css" />
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <div class="container">
+    <h1>Trades</h1>
+    <div id="toast-container" class="toast-container"></div>
+
+    <section style="margin-top: 1rem;">
+      <h2>Find Matches</h2>
+      <p>Select another user to see 1:1 trade matches between your collection + their wishlist (and vice versa).</p>
+
+      <div style="display:flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+        <label for="other-user-select">Trade with:</label>
+        <select id="other-user-select"></select>
+        <button id="find-matches-btn" class="button">Find Matches</button>
+      </div>
+
+      <div id="matches" style="margin-top: 1rem;"></div>
+
+      <div id="propose" style="margin-top: 1rem; display:none;">
+        <h3>Propose Trade</h3>
+        <p>Select one or more suggested swaps, then propose.</p>
+        <div style="display:flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+          <input id="trade-note" type="text" placeholder="Optional note" style="min-width: 300px;" />
+          <button id="propose-trade-btn" class="button">Propose Selected Swaps</button>
+        </div>
+      </div>
+    </section>
+
+    <hr style="margin: 2rem 0;" />
+
+    <section>
+      <h2>My Trades</h2>
+      <div id="my-trades"></div>
+    </section>
+  </div>
+
+  <script src="/scripts/util.js" defer></script>
+  <script src="/scripts/auth.js" defer></script>
+  <script src="/scripts/nav.js" defer></script>
+  <script src="/scripts/trades.js" defer></script>
+</body>
+
+</html>
