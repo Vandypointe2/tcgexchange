@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+body {
+  @apply min-h-screen text-slate-100;
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(255,43,214,.16), transparent 60%),
+    radial-gradient(900px 500px at 80% 10%, rgba(25,246,210,.12), transparent 60%),
+    linear-gradient(180deg, theme(colors.bg0), theme(colors.bg1));
+}
+
+.card {
+  @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur p-4 shadow-[0_18px_60px_rgba(0,0,0,.45)];
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-semibold transition;
+}
+
+.btn-primary {
+  @apply text-[#071015];
+  background: linear-gradient(90deg, rgba(25,246,210,.92), rgba(255,43,214,.88));
+}
+
+.btn-primary:hover { filter: saturate(1.15) brightness(1.05); }
+
+.btn-ghost {
+  @apply border border-white/15 bg-white/5 hover:border-neonCyan/70;
+}
+
+.input {
+  @apply w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-slate-100 placeholder:text-slate-400 outline-none focus:ring-4 focus:ring-neonCyan/20;
+}
+
+.link {
+  @apply text-neonCyan hover:underline;
+}
