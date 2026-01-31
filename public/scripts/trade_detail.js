@@ -32,9 +32,13 @@ function renderTradeMeta(trade, me) {
   slot.innerHTML = '';
 
   const otherUser = trade.proposerId === me.id ? trade.recipient : trade.proposer;
-  slot.appendChild(el('p', { text: `Status: ${trade.status}` }));
+  const statusLine = el('p');
+  statusLine.appendChild(el('span', { text: 'Status: ' }));
+  statusLine.appendChild(el('span', { class: `status ${trade.status}`, text: trade.status }));
+  slot.appendChild(statusLine);
+
   slot.appendChild(el('p', { text: `With: ${otherUser?.username || 'Unknown'}` }));
-  slot.appendChild(el('p', { text: `Created: ${new Date(trade.createdAt).toLocaleString()}` }));
+  slot.appendChild(el('p', { class: 'muted', text: `Created: ${new Date(trade.createdAt).toLocaleString()}` }));
 }
 
 function renderItems(trade, me) {

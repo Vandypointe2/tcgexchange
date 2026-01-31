@@ -8,42 +8,52 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
   <link rel="stylesheet" href="/styles/search.css" />
+  <link rel="stylesheet" href="/styles/ui.css" />
 </head>
 
 <body>
   <div id="header"></div>
 
-  <div class="container">
+  <div class="container page">
     <h1>Trade</h1>
     <div id="toast-container" class="toast-container"></div>
 
-    <div id="trade-meta"></div>
-
-    <section style="margin-top: 1rem;">
-      <h2>Items</h2>
-      <div id="trade-items"></div>
-    </section>
-
-    <section style="margin-top: 1rem;">
-      <h2>Actions</h2>
-      <div id="trade-actions" style="display:flex; gap: 0.5rem; flex-wrap: wrap;"></div>
-      <div style="margin-top: .75rem;">
-        <button id="hide-trade-btn" class="button">Hide this trade</button>
-        <small style="display:block; color: var(--link); margin-top:.25rem;">Hides this trade from your list (doesn’t delete for the other user).</small>
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Trade details</div>
+          <div class="muted" style="margin-top:.25rem;">Status, items, and messages.</div>
+        </div>
       </div>
-    </section>
+      <div class="panel-body">
+        <div id="trade-meta"></div>
 
-    <hr style="margin: 2rem 0;" />
+        <div class="grid cols-2" style="margin-top: 1rem;">
+          <div>
+            <h2 style="margin:0 0 .5rem;">Items</h2>
+            <div id="trade-items"></div>
+          </div>
+          <div>
+            <h2 style="margin:0 0 .5rem;">Actions</h2>
+            <div id="trade-actions" style="display:flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+            <div style="margin-top: .75rem;">
+              <button id="hide-trade-btn" class="btn">Hide this trade</button>
+              <div class="muted" style="margin-top:.25rem; font-size:.9rem;">Hides this trade from your list (doesn’t delete for the other user).</div>
+            </div>
+          </div>
+        </div>
 
-    <section>
-      <h2>Messages</h2>
-      <div id="trade-messages" style="display:flex; flex-direction:column; gap:0.5rem;"></div>
+        <hr style="margin: 1.5rem 0; border:0; border-top:1px solid rgba(255,255,255,.10);" />
 
-      <div style="margin-top: 0.75rem; display:flex; gap:0.5rem;">
-        <input id="message-input" type="text" placeholder="Write a message..." style="flex:1;" />
-        <button id="send-message-btn">Send</button>
+        <h2 style="margin:0 0 .5rem;">Messages</h2>
+        <div id="trade-messages" style="display:flex; flex-direction:column; gap:0.6rem;"></div>
+
+        <div style="margin-top: 0.75rem; display:flex; gap:0.75rem; align-items:center;">
+          <input id="message-input" type="text" placeholder="Write a message..." style="flex:1;" />
+          <button id="send-message-btn" class="btn btn-primary">Send</button>
+        </div>
       </div>
-    </section>
+    </div>
   </div>
 
   <script src="/scripts/util.js" defer></script>

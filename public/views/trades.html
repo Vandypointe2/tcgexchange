@@ -9,44 +9,62 @@
   <link rel="stylesheet" href="/styles/nav.css" />
   <link rel="stylesheet" href="/styles/search.css" />
   <link rel="stylesheet" href="/styles/trades.css" />
+  <link rel="stylesheet" href="/styles/ui.css" />
 </head>
 
 <body>
   <div id="header"></div>
 
-  <div class="container">
+  <div class="container page">
     <h1>Trades</h1>
     <div id="toast-container" class="toast-container"></div>
 
-    <section style="margin-top: 1rem;">
-      <h2>Find Matches</h2>
-      <p>We’ll recommend the best people to trade with based on your collection/wishlist vs theirs.</p>
-
-      <div style="display:flex; gap: .5rem; align-items:center; flex-wrap:wrap;">
-        <button id="refresh-recs-btn" class="button">Refresh Recommendations</button>
-        <small style="color: var(--link);">(Top matches by wishlist priority + availability)</small>
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Recommended traders</div>
+          <div class="muted" style="margin-top:.25rem;">Ranked by wishlist priority + availability (1:1 swap ideas).</div>
+        </div>
+        <button id="refresh-recs-btn" class="btn btn-primary">Refresh</button>
       </div>
+      <div class="panel-body">
+        <div id="recommendations" class="user-list"></div>
+      </div>
+    </div>
 
-      <div id="recommendations" class="user-list" style="margin-top: 1rem;"></div>
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Matches</div>
+          <div class="muted" style="margin-top:.25rem;">Pick a user above to see matching cards and propose a trade.</div>
+        </div>
+        <span class="pill"><span class="pill-dot"></span><span>Neon mode</span></span>
+      </div>
+      <div class="panel-body">
+        <div id="matches"></div>
 
-      <div id="matches" style="margin-top: 1rem;"></div>
-
-      <div id="propose" style="margin-top: 1rem; display:none;">
-        <h3>Propose Trade</h3>
-        <p>Select one or more suggested swaps, then propose.</p>
-        <div style="display:flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-          <input id="trade-note" type="text" placeholder="Optional note" style="min-width: 300px;" />
-          <button id="propose-trade-btn" class="button">Propose Selected Swaps</button>
+        <div id="propose" style="margin-top: 1rem; display:none;">
+          <h3 style="margin: 0 0 .35rem;">Propose trade</h3>
+          <p class="muted" style="margin: 0 0 .75rem;">Select one or more suggested swaps, then propose.</p>
+          <div style="display:flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <input id="trade-note" type="text" placeholder="Optional note" style="min-width: 320px;" />
+            <button id="propose-trade-btn" class="btn btn-primary">Propose Selected Swaps</button>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <hr style="margin: 2rem 0;" />
-
-    <section>
-      <h2>My Trades</h2>
-      <div id="my-trades"></div>
-    </section>
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">My trades</div>
+          <div class="muted" style="margin-top:.25rem;">Your active and recent trade threads.</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="my-trades"></div>
+      </div>
+    </div>
   </div>
 
   <script src="/scripts/util.js" defer></script>
