@@ -1,0 +1,17 @@
+/* modern-pages.css — small page-specific tweaks to match ui.css panels */
+
+.page-title{
+  font-size: 2rem;
+  margin: 0 0 .75rem;
+}
+
+.panel + .panel{ margin-top: 1rem; }
+
+/* Make card-grid tiles look consistent on list pages */
+.card-grid .card{
+  border: 1px solid var(--border);
+}
+
+body.dark .card-grid .card{
+  border-color: rgba(255,255,255,.12);
+}

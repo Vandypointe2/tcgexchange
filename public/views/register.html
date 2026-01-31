@@ -8,21 +8,33 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/login.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
+  <link rel="stylesheet" href="/styles/ui.css" />
+  <link rel="stylesheet" href="/styles/modern-pages.css" />
 </head>
 
 <body>
   <div id="header"></div>
 
-  <div class="container">
-    <h1>Create Account</h1>
+  <div class="container page">
+    <h1 class="page-title">Create Account</h1>
 
-    <form id="signup-form">
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Sign up</div>
+          <div class="muted" style="margin-top:.25rem;">Create your username and start tracking cards.</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form id="signup-form">
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Sign Up</button>
-    </form>
+        </form>
 
-    <a class="small-link" href="/login.html">Already have a user? Log in</a>
+        <a class="link-chip" href="/login.html">Already have a user? Log in</a>
+      </div>
+    </div>
   </div>
 
   <script src="/scripts/util.js" defer></script>

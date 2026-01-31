@@ -9,20 +9,30 @@
     <link rel="stylesheet" href="/styles/search.css" />
     <link rel="stylesheet" href="/styles/inventory.css" />
     <link rel="stylesheet" href="/styles/nav.css" />
+    <link rel="stylesheet" href="/styles/ui.css" />
+    <link rel="stylesheet" href="/styles/modern-pages.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.css" />
 </head>
 
 <body>
     <div id="header"></div>
 
-    <div class="container">
-        <h1>Card Search</h1>
+    <div class="container page">
+        <h1 class="page-title">Card Search</h1>
 
-        <div id="apiFallback" class="toggle" style="justify-content:center; margin-bottom: 1rem;">
+        <div class="panel" style="margin-top: 1rem;">
+            <div class="panel-header">
+                <div>
+                    <div class="section-title">Filters</div>
+                    <div class="muted" style="margin-top:.25rem;">Search the local dataset and build your inventory.</div>
+                </div>
+                <div id="apiFallback" class="toggle" style="margin:0;">
             <span>API Fallback</span>
             <input type="checkbox" id="apiFallbackToggle" />
             <label for="apiFallbackToggle" title="Allow fallback to external API when local search has no results"></label>
-        </div>
+                </div>
+            </div>
+            <div class="panel-body">
 
         <form id="search-form">
             <!-- Card Name -->
@@ -161,10 +171,22 @@
                 <button type="reset">Reset Filters</button>
             </div>
         </form>
+            </div>
+        </div>
 
-        <div id="card-results" class="card-grid"></div>
-        <div id="loading-spinner" style="display: none; text-align: center;">Loading more cards...</div>
-        <div id="pagination" class="pagination-controls"></div>
+        <div class="panel" style="margin-top: 1rem;">
+            <div class="panel-header">
+                <div>
+                    <div class="section-title">Results</div>
+                    <div class="muted" style="margin-top:.25rem;">Click a card to view details or add it to your collection/wishlist.</div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="card-results" class="card-grid"></div>
+                <div id="loading-spinner" style="display: none; text-align: center;">Loading more cards...</div>
+                <div id="pagination" class="pagination-controls"></div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.1/dist/nouislider.min.js"></script>

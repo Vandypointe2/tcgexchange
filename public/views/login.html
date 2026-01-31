@@ -8,21 +8,33 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/login.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
+  <link rel="stylesheet" href="/styles/ui.css" />
+  <link rel="stylesheet" href="/styles/modern-pages.css" />
 </head>
 
 <body>
   <div id="header"></div>
 
-  <div class="container">
-    <h1>🎴 TCG Exchange</h1>
+  <div class="container page">
+    <h1 class="page-title">🎴 TCG Exchange</h1>
 
-    <form id="loginForm">
+    <div class="panel" style="margin-top: 1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Log in</div>
+          <div class="muted" style="margin-top:.25rem;">Access your collection, wishlist, and trades.</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <form id="loginForm">
       <input type="text" id="username" placeholder="Username" required />
       <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Log In</button>
-    </form>
+        </form>
 
-    <a class="small-link" href="/register.html">First time? Create a user!</a>
+        <a class="link-chip" href="/register.html">First time? Create a user</a>
+      </div>
+    </div>
   </div>
 
   <script src="/scripts/util.js" defer></script>

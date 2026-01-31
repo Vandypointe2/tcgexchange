@@ -9,16 +9,28 @@
   <link rel="stylesheet" href="/styles/search.css" />
   <link rel="stylesheet" href="/styles/inventory.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
+  <link rel="stylesheet" href="/styles/ui.css" />
+  <link rel="stylesheet" href="/styles/modern-pages.css" />
 </head>
 
 <body>
   <div id="header"></div>
 
-  <div class="container">
-    <h1>My Wishlist</h1>
+  <div class="container page">
+    <h1 class="page-title">My Wishlist</h1>
     <div id="toast-container" class="toast-container"></div>
 
-    <div id="wishlist-list" class="card-grid"></div>
+    <div class="panel" style="margin-top:1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Wanted cards</div>
+          <div class="muted" style="margin-top:.25rem;">What you’re trying to trade for.</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div id="wishlist-list" class="card-grid"></div>
+      </div>
+    </div>
   </div>
 
   <script src="/scripts/util.js" defer></script>

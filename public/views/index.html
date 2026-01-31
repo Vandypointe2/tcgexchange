@@ -7,15 +7,31 @@
   <title>TCG Exchange</title>
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
+  <link rel="stylesheet" href="/styles/ui.css" />
+  <link rel="stylesheet" href="/styles/modern-pages.css" />
 </head>
 
 <body>
   <div id="header"></div>
 
-  <div class="container">
-    <h1>TCG Exchange</h1>
+  <div class="container page">
+    <h1 class="page-title">TCG Exchange</h1>
     <div id="toast-container" class="toast-container"></div>
-    <p>Use the menu to navigate.</p>
+
+    <div class="panel" style="margin-top:1rem;">
+      <div class="panel-header">
+        <div>
+          <div class="section-title">Welcome</div>
+          <div class="muted" style="margin-top:.25rem;">Use the menu to navigate. Start with Search, then build your Collection/Wishlist.</div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="grid cols-2">
+          <a class="link-chip" href="/search.html">Search cards</a>
+          <a class="link-chip" href="/trades.html">Find trades</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="/scripts/util.js" defer></script>
