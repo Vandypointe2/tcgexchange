@@ -17,10 +17,20 @@ async function injectHeaderIfNeeded() {
     const html = await res.text();
     slot.innerHTML = html;
 
-    // Hide logout if there's no token (login/register pages)
     const token = localStorage.getItem('token');
     const logoutBtn = document.getElementById('logout-btn');
+
+    // Hide logout if there's no token (login/register pages)
     if (logoutBtn && !token) logoutBtn.style.display = 'none';
+
+    // Make logout work everywhere (any page that injects the header)
+    if (logoutBtn && logoutBtn.dataset.bound !== 'true') {
+        logoutBtn.dataset.bound = 'true';
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        });
+    }
 }
 
 async function injectThemeToggle() {
