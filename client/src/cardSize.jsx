@@ -8,20 +8,22 @@ export function CardSizeProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('cardSize', size);
 
+    // Small + Large define the endpoints; Medium is computed as halfway.
+    const sm = { min: 220, h: 64, w: 46 };
+    // Make Large at least ~3x bigger than Small (for the thumbnail size).
+    const lg = { min: 520, h: sm.h * 3, w: sm.w * 3 };
+    const md = {
+      min: Math.round((sm.min + lg.min) / 2),
+      h: Math.round((sm.h + lg.h) / 2),
+      w: Math.round((sm.w + lg.w) / 2)
+    };
+
+    const preset = size === 'sm' ? sm : (size === 'lg' ? lg : md);
+
     const root = document.documentElement;
-    if (size === 'sm') {
-      root.style.setProperty('--card-min', '220px');
-      root.style.setProperty('--card-thumb-h', '64px');
-      root.style.setProperty('--card-thumb-w', '46px');
-    } else if (size === 'lg') {
-      root.style.setProperty('--card-min', '340px');
-      root.style.setProperty('--card-thumb-h', '110px');
-      root.style.setProperty('--card-thumb-w', '78px');
-    } else {
-      root.style.setProperty('--card-min', '280px');
-      root.style.setProperty('--card-thumb-h', '84px');
-      root.style.setProperty('--card-thumb-w', '60px');
-    }
+    root.style.setProperty('--card-min', `${preset.min}px`);
+    root.style.setProperty('--card-thumb-h', `${preset.h}px`);
+    root.style.setProperty('--card-thumb-w', `${preset.w}px`);
   }, [size]);
 
   const value = useMemo(() => ({ size, setSize }), [size]);
