@@ -30,16 +30,27 @@ async function loadRecommendations() {
 
   recs.forEach((r) => {
     const row = el('div', { class: 'user-card' });
+
+    const leftWrap = el('div', { class: 'user-left' });
+    const avatar = el('img', { class: 'user-avatar', alt: 'avatar' });
+    avatar.src = r.user.avatarUrl || 'https://www.gravatar.com/avatar/?d=mp&f=y';
+
     const left = el('div');
-    left.appendChild(el('div', { text: r.user.username }));
-    left.appendChild(el('div', { class: 'meta', text: `Score: ${r.score} · Suggested swaps: ${r.swapCount}` }));
+    left.appendChild(el('div', { class: 'match-title', text: r.user.username }));
+    const meta = el('div', { class: 'meta' });
+    meta.appendChild(el('span', { class: 'score-pill', text: `Score ${r.score}` }));
+    meta.appendChild(document.createTextNode(` · ${r.swapCount} swap ideas`));
+    left.appendChild(meta);
+
+    leftWrap.appendChild(avatar);
+    leftWrap.appendChild(left);
 
     const btn = el('button', { class: 'button', text: 'View Matches' });
     btn.addEventListener('click', () => {
       findMatches(r.user.id).catch((e) => showToast(e.message || 'Failed to load matches', 'error'));
     });
 
-    row.appendChild(left);
+    row.appendChild(leftWrap);
     row.appendChild(btn);
     slot.appendChild(row);
   });
@@ -63,11 +74,18 @@ function renderMatches(data) {
   if (!iGive.length) {
     giveList.appendChild(el('p', { text: 'No direct matches (your collection vs their wishlist).' }));
   } else {
-    const ul = el('ul');
-    iGive.forEach((m) => {
-      ul.appendChild(el('li', { text: `${fmtCard(m.card)} (up to ${m.qty})` }));
+    const grid = el('div', { class: 'matches-grid' });
+    iGive.slice(0, 12).forEach((m) => {
+      const img = el('img', { alt: 'card' });
+      if (m.card?.imageSmall) img.src = m.card.imageSmall;
+      const info = el('div');
+      info.appendChild(el('div', { class: 'match-title', text: m.card?.name || m.cardId }));
+      info.appendChild(el('div', { class: 'match-sub', text: `${m.card?.setName || ''} #${m.card?.number || ''} · up to ${m.qty}`.trim() }));
+      const row = el('div', { class: 'match-card' }, [img, info]);
+      grid.appendChild(row);
     });
-    giveList.appendChild(ul);
+    if (iGive.length > 12) grid.appendChild(el('p', { class: 'meta', text: `…and ${iGive.length - 12} more` }));
+    giveList.appendChild(grid);
   }
 
   const receiveList = el('div');
@@ -75,11 +93,18 @@ function renderMatches(data) {
   if (!theyGive.length) {
     receiveList.appendChild(el('p', { text: 'No direct matches (their collection vs your wishlist).' }));
   } else {
-    const ul = el('ul');
-    theyGive.forEach((m) => {
-      ul.appendChild(el('li', { text: `${fmtCard(m.card)} (up to ${m.qty})` }));
+    const grid = el('div', { class: 'matches-grid' });
+    theyGive.slice(0, 12).forEach((m) => {
+      const img = el('img', { alt: 'card' });
+      if (m.card?.imageSmall) img.src = m.card.imageSmall;
+      const info = el('div');
+      info.appendChild(el('div', { class: 'match-title', text: m.card?.name || m.cardId }));
+      info.appendChild(el('div', { class: 'match-sub', text: `${m.card?.setName || ''} #${m.card?.number || ''} · up to ${m.qty}`.trim() }));
+      const row = el('div', { class: 'match-card' }, [img, info]);
+      grid.appendChild(row);
     });
-    receiveList.appendChild(ul);
+    if (theyGive.length > 12) grid.appendChild(el('p', { class: 'meta', text: `…and ${theyGive.length - 12} more` }));
+    receiveList.appendChild(grid);
   }
 
   matches.appendChild(giveList);
@@ -91,9 +116,9 @@ function renderMatches(data) {
     return;
   }
 
-  const list = el('div', { id: 'suggested-swaps', style: 'display:flex; flex-direction:column; gap:0.5rem;' });
+  const list = el('div', { id: 'suggested-swaps', style: 'display:flex; flex-direction:column; gap:0.6rem;' });
   suggestedSwaps.forEach((s, idx) => {
-    const row = el('label', { style: 'display:flex; gap:0.5rem; align-items:center;' });
+    const row = el('label', { class: 'swap-row' });
     const cb = el('input', {
       type: 'checkbox',
       'data-give': s.give.id,
@@ -102,7 +127,12 @@ function renderMatches(data) {
       id: `swap-${idx}`
     });
     row.appendChild(cb);
-    row.appendChild(el('span', { text: `You give: ${fmtCard(s.give)}  ⇄  You receive: ${fmtCard(s.receive)} (x${s.quantity || 1})` }));
+
+    const text = el('div');
+    text.appendChild(el('div', { class: 'match-title', text: `You give: ${fmtCard(s.give)}` }));
+    text.appendChild(el('div', { class: 'match-sub', text: `You receive: ${fmtCard(s.receive)} · x${s.quantity || 1}` }));
+    row.appendChild(text);
+
     list.appendChild(row);
   });
 

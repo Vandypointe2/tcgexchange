@@ -2,6 +2,22 @@
 .trade-link:visited{ color: var(--text); }
 .trade-link:hover{ text-decoration: underline; }
 
-.user-card{ display:flex; justify-content:space-between; align-items:center; gap:.75rem; padding:.75rem 1rem; border:1px solid var(--border); border-radius: 10px; background: var(--card-bg); }
+.btn-link{ display:inline-flex; align-items:center; justify-content:center; padding:.6rem 1rem; border-radius:10px; border:1px solid var(--border); background: var(--card-bg); color: var(--text); text-decoration:none; }
+.btn-link:hover{ border-color: var(--highlight); text-decoration:none; }
+
+.user-card{ display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1rem; border:1px solid var(--border); border-radius: 14px; background: var(--card-bg); }
+.user-left{ display:flex; align-items:center; gap:.9rem; }
+.user-avatar{ width:44px; height:44px; border-radius: 12px; object-fit: cover; border:1px solid var(--border); background: rgba(255,255,255,.06); }
 .user-card .meta{ color: var(--link); font-size: .9rem; }
 .user-list{ display:flex; flex-direction:column; gap:.75rem; }
+.score-pill{ display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .55rem; border-radius: 999px; border:1px solid var(--border); color: var(--text); font-size:.8rem; }
+
+.matches-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem; }
+.match-card{ display:flex; gap:.65rem; align-items:center; padding:.75rem; border:1px solid var(--border); border-radius: 12px; background: var(--card-bg); }
+.match-card img{ width:52px; height:72px; object-fit: cover; border-radius: 10px; border:1px solid var(--border); background: rgba(255,255,255,.06); }
+.match-title{ font-weight: 700; }
+.match-sub{ color: var(--link); font-size:.9rem; }
+
+.swap-row{ display:flex; gap:.6rem; align-items:center; padding:.6rem; border-radius: 12px; border:1px solid var(--border); background: var(--card-bg); }
+.swap-row:hover{ border-color: var(--highlight); }
+.swap-row input{ transform: scale(1.1); }
