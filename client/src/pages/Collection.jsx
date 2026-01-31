@@ -19,11 +19,12 @@ function ItemRow({ item, card, onUpdate, onDelete }) {
           <img
             src={card.images.small}
             alt={card.name}
-            className="h-16 w-12 rounded-lg object-cover ring-1 ring-black/5 dark:ring-white/10"
+            style={{ height: 'calc(var(--card-thumb-h) * 0.85)', width: 'calc(var(--card-thumb-w) * 0.85)' }}
+            className="rounded-lg object-cover ring-1 ring-black/5 dark:ring-white/10"
             loading="lazy"
           />
         ) : (
-          <div className="h-16 w-12 rounded-lg bg-black/5 dark:bg-white/5" />
+          <div style={{ height: 'calc(var(--card-thumb-h) * 0.85)', width: 'calc(var(--card-thumb-w) * 0.85)' }} className="rounded-lg bg-black/5 dark:bg-white/5" />
         )}
 
         <div className="min-w-0">

@@ -12,7 +12,8 @@ function CardTile({ card }) {
         <img
           src={card.images?.small}
           alt={card.name}
-          className="h-20 w-14 rounded-lg object-cover ring-1 ring-black/5 dark:ring-white/10"
+          style={{ height: 'var(--card-thumb-h)', width: 'var(--card-thumb-w)' }}
+          className="rounded-lg object-cover ring-1 ring-black/5 dark:ring-white/10"
           loading="lazy"
         />
         <div className="min-w-0">
@@ -185,7 +186,7 @@ export default function Search() {
         </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="card-grid">
         {cards.map((c) => (
           <CardTile key={c.id} card={c} />
         ))}
