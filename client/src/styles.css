@@ -109,6 +109,9 @@
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--card-min), 1fr));
+  grid-template-columns: var(
+    --card-grid-template,
+    repeat(auto-fit, minmax(var(--card-min), 1fr))
+  );
   gap: 12px;
 }

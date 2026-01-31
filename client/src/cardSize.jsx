@@ -10,8 +10,11 @@ export function CardSizeProvider({ children }) {
 
     // Small + Large define the endpoints; Medium is computed as halfway.
     const sm = { min: 220, h: 64, w: 46 };
-    // Make Large very large (about 6x Small for the thumbnail size).
-    const lg = { min: 820, h: sm.h * 6, w: sm.w * 6 };
+
+    // Large: make the image huge, but keep the *tile* width reasonable so we can show 3 per row.
+    // (We control columns separately via --card-grid-template.)
+    const lg = { min: 260, h: sm.h * 6, w: sm.w * 6 };
+
     const md = {
       min: Math.round((sm.min + lg.min) / 2),
       h: Math.round((sm.h + lg.h) / 2),
@@ -24,6 +27,13 @@ export function CardSizeProvider({ children }) {
     root.style.setProperty('--card-min', `${preset.min}px`);
     root.style.setProperty('--card-thumb-h', `${preset.h}px`);
     root.style.setProperty('--card-thumb-w', `${preset.w}px`);
+
+    // For Large, force a 3-column grid so tiles don't stretch full width.
+    if (size === 'lg') {
+      root.style.setProperty('--card-grid-template', 'repeat(3, minmax(0, 1fr))');
+    } else {
+      root.style.removeProperty('--card-grid-template');
+    }
   }, [size]);
 
   const value = useMemo(() => ({ size, setSize }), [size]);
