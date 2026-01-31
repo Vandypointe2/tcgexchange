@@ -1,0 +1,7 @@
+.trade-link{ color: var(--text); }
+.trade-link:visited{ color: var(--text); }
+.trade-link:hover{ text-decoration: underline; }
+
+.user-card{ display:flex; justify-content:space-between; align-items:center; gap:.75rem; padding:.75rem 1rem; border:1px solid var(--border); border-radius: 10px; background: var(--card-bg); }
+.user-card .meta{ color: var(--link); font-size: .9rem; }
+.user-list{ display:flex; flex-direction:column; gap:.75rem; }

@@ -158,6 +158,19 @@ async function init() {
   btn.onclick = () => {
     sendMessage(trade.id).catch((e) => showToast(e.message || 'Failed to send message', 'error'));
   };
+
+  const hideBtn = document.getElementById('hide-trade-btn');
+  if (hideBtn) {
+    hideBtn.onclick = async () => {
+      try {
+        await apiRequest(`/trades/${trade.id}/hide`, 'POST');
+        showToast('Trade hidden.', 'success');
+        window.location.href = '/trades.html';
+      } catch (e) {
+        showToast(e.message || 'Failed to hide trade', 'error');
+      }
+    };
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

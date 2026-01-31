@@ -16,18 +16,32 @@ function fmtCard(card) {
   return `${card.name || card.id}${set}${num}`;
 }
 
-async function loadUsers() {
-  const select = document.getElementById('other-user-select');
-  select.innerHTML = '';
+async function loadRecommendations() {
+  const slot = document.getElementById('recommendations');
+  slot.innerHTML = '';
 
-  const { users } = await apiRequest('/trades/users');
-  if (!users || users.length === 0) {
-    select.appendChild(el('option', { value: '', text: 'No other users found' }));
+  const resp = await apiRequest('/trades/recommendations?limit=25');
+  const recs = resp?.recommendations || [];
+
+  if (!recs.length) {
+    slot.appendChild(el('p', { text: 'No strong trade matches found yet. Add more cards to your collection/wishlist.' }));
     return;
   }
 
-  users.forEach((u) => {
-    select.appendChild(el('option', { value: u.id, text: u.username }));
+  recs.forEach((r) => {
+    const row = el('div', { class: 'user-card' });
+    const left = el('div');
+    left.appendChild(el('div', { text: r.user.username }));
+    left.appendChild(el('div', { class: 'meta', text: `Score: ${r.score} · Suggested swaps: ${r.swapCount}` }));
+
+    const btn = el('button', { class: 'button', text: 'View Matches' });
+    btn.addEventListener('click', () => {
+      findMatches(r.user.id).catch((e) => showToast(e.message || 'Failed to load matches', 'error'));
+    });
+
+    row.appendChild(left);
+    row.appendChild(btn);
+    slot.appendChild(row);
   });
 }
 
@@ -109,7 +123,7 @@ async function loadMyTrades() {
   const ul = el('ul');
   trades.forEach((t) => {
     const other = (t.proposerId === t.recipientId) ? '' : (t.proposer?.username && t.recipient?.username ? `${t.proposer.username} ↔ ${t.recipient.username}` : '');
-    const a = el('a', { href: `/trade_detail.html?id=${t.id}`, text: `Trade #${t.id} — ${other} — ${t.status}` });
+    const a = el('a', { class: 'trade-link', href: `/trade_detail.html?id=${t.id}`, text: `Trade #${t.id} — ${other} — ${t.status}` });
     const li = el('li');
     li.appendChild(a);
     ul.appendChild(li);
@@ -117,16 +131,16 @@ async function loadMyTrades() {
   slot.appendChild(ul);
 }
 
-async function findMatches() {
-  const otherUserId = document.getElementById('other-user-select').value;
+async function findMatches(otherUserId) {
   if (!otherUserId) return;
   const data = await apiRequest(`/trades/matches/${otherUserId}`);
   window.__lastMatchData = data;
+  window.__lastOtherUserId = otherUserId;
   renderMatches(data);
 }
 
 async function proposeTrade() {
-  const otherUserId = document.getElementById('other-user-select').value;
+  const otherUserId = window.__lastOtherUserId;
   const note = document.getElementById('trade-note').value;
 
   const selected = Array.from(document.querySelectorAll('#suggested-swaps input[type="checkbox"]'))
@@ -155,11 +169,11 @@ async function proposeTrade() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    await loadUsers();
+    await loadRecommendations();
     await loadMyTrades();
 
-    document.getElementById('find-matches-btn').addEventListener('click', () => {
-      findMatches().catch((e) => showToast(e.message || 'Failed to load matches', 'error'));
+    document.getElementById('refresh-recs-btn')?.addEventListener('click', () => {
+      loadRecommendations().catch((e) => showToast(e.message || 'Failed to load recommendations', 'error'));
     });
 
     document.getElementById('propose-trade-btn').addEventListener('click', () => {

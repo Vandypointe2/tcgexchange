@@ -36,6 +36,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}).filter(Boolean).join("");
 		document.getElementById("market-data").innerHTML = marketHtml || '<p>Market prices unavailable (local cache).</p>';
 
+		// TCGplayer query link
+		const qName = card.name || '';
+		const qNum = card.number || '';
+		const qTot = set.printedTotal || '';
+		const q = `${qName} - ${qNum}/${qTot}`.trim();
+		const tcg = document.getElementById('tcgplayer-link');
+		if (tcg) {
+			tcg.href = `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${encodeURIComponent(q)}&view=grid`;
+		}
+
 		// Inline add UI: temporarily replace the two buttons with fields + submit
 		const actionsEl = document.getElementById('card-actions');
 		if (actionsEl) {

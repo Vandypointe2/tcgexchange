@@ -5,6 +5,7 @@ const tradesController = require('../controllers/tradesController');
 const router = express.Router();
 
 router.get('/users', authMiddleware, tradesController.listUsersForTrading);
+router.get('/recommendations', authMiddleware, tradesController.getRecommendations);
 router.get('/matches/:otherUserId', authMiddleware, tradesController.matchesValidation, tradesController.getMatchesWithUser);
 
 router.get('/', authMiddleware, tradesController.listTrades);
@@ -13,5 +14,6 @@ router.post('/', authMiddleware, tradesController.createTradeValidation, tradesC
 router.get('/:id', authMiddleware, tradesController.getTradeValidation, tradesController.getTrade);
 router.post('/:id/respond', authMiddleware, tradesController.respondValidation, tradesController.respondToTrade);
 router.post('/:id/messages', authMiddleware, tradesController.createMessageValidation, tradesController.createMessage);
+router.post('/:id/hide', authMiddleware, tradesController.hideTradeValidation, tradesController.hideTrade);
 
 module.exports = router;

@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/styles/base.css" />
   <link rel="stylesheet" href="/styles/nav.css" />
   <link rel="stylesheet" href="/styles/search.css" />
+  <link rel="stylesheet" href="/styles/trades.css" />
 </head>
 
 <body>
@@ -19,13 +20,14 @@
 
     <section style="margin-top: 1rem;">
       <h2>Find Matches</h2>
-      <p>Select another user to see 1:1 trade matches between your collection + their wishlist (and vice versa).</p>
+      <p>We’ll recommend the best people to trade with based on your collection/wishlist vs theirs.</p>
 
-      <div style="display:flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-        <label for="other-user-select">Trade with:</label>
-        <select id="other-user-select"></select>
-        <button id="find-matches-btn" class="button">Find Matches</button>
+      <div style="display:flex; gap: .5rem; align-items:center; flex-wrap:wrap;">
+        <button id="refresh-recs-btn" class="button">Refresh Recommendations</button>
+        <small style="color: var(--link);">(Top matches by wishlist priority + availability)</small>
       </div>
+
+      <div id="recommendations" class="user-list" style="margin-top: 1rem;"></div>
 
       <div id="matches" style="margin-top: 1rem;"></div>
 

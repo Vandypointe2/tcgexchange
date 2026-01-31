@@ -8,10 +8,12 @@ const {
   CardCache,
   Trade,
   TradeItem,
-  TradeMessage
+  TradeMessage,
+  TradeUserState
 } = require('../../models');
 
 const { computeDirectionalMatches, greedyOneToOneSwaps } = require('../util/tradeMatcher');
+const { recommendUsers } = require('../util/tradeRecommender');
 
 async function cardMapForIds(cardIds) {
   if (!cardIds.length) return {};
@@ -34,6 +36,34 @@ exports.listUsersForTrading = async (req, res) => {
     attributes: ['id', 'username', 'avatarUrl']
   });
   res.json({ users });
+};
+
+// Recommend best trading partners based on mutual matches
+exports.getRecommendations = async (req, res) => {
+  const myUserId = req.user.userId;
+  const limit = Math.min(parseInt(req.query.limit || '20', 10) || 20, 50);
+
+  // eslint-disable-next-line global-require
+  const { Op } = require('sequelize');
+
+  const [meCollection, meWishlist, otherUsers] = await Promise.all([
+    CollectionItem.findAll({ where: { userId: myUserId } }),
+    WishlistItem.findAll({ where: { userId: myUserId } }),
+    User.findAll({ where: { id: { [Op.ne]: myUserId } }, attributes: ['id', 'username', 'avatarUrl'] })
+  ]);
+
+  // Load other users' inventory in parallel
+  const others = await Promise.all(otherUsers.map(async (u) => {
+    const [collection, wishlist] = await Promise.all([
+      CollectionItem.findAll({ where: { userId: u.id } }),
+      WishlistItem.findAll({ where: { userId: u.id } })
+    ]);
+    return { user: u, collection, wishlist };
+  }));
+
+  const recs = recommendUsers({ myCollection: meCollection, myWishlist: meWishlist, others, maxUsers: limit });
+
+  res.json({ recommendations: recs });
 };
 
 exports.matchesValidation = [
@@ -154,9 +184,15 @@ exports.listTrades = async (req, res) => {
   // eslint-disable-next-line global-require
   const { Op } = require('sequelize');
 
+  const hiddenRows = await TradeUserState.findAll({ where: { userId: myUserId, hidden: true }, attributes: ['tradeId'] });
+  const hiddenTradeIds = hiddenRows.map((r) => r.tradeId);
+
   const trades = await Trade.findAll({
     where: {
-      [Op.or]: [{ proposerId: myUserId }, { recipientId: myUserId }]
+      [Op.and]: [
+        { [Op.or]: [{ proposerId: myUserId }, { recipientId: myUserId }] },
+        ...(hiddenTradeIds.length ? [{ id: { [Op.notIn]: hiddenTradeIds } }] : [])
+      ]
     },
     order: [['updatedAt', 'DESC']],
     include: [
@@ -166,6 +202,34 @@ exports.listTrades = async (req, res) => {
   });
 
   res.json({ trades });
+};
+
+exports.hideTradeValidation = [
+  param('id').isInt({ min: 1 }).withMessage('id must be an integer')
+];
+
+exports.hideTrade = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+  const myUserId = req.user.userId;
+  const tradeId = parseInt(req.params.id, 10);
+
+  const trade = await Trade.findByPk(tradeId);
+  if (!trade) return res.status(404).json({ error: 'Trade not found' });
+  if (trade.proposerId !== myUserId && trade.recipientId !== myUserId) return res.status(403).json({ error: 'Not allowed' });
+
+  const [row] = await TradeUserState.findOrCreate({
+    where: { tradeId, userId: myUserId },
+    defaults: { hidden: true }
+  });
+
+  if (!row.hidden) {
+    row.hidden = true;
+    await row.save();
+  }
+
+  res.json({ ok: true });
 };
 
 exports.getTradeValidation = [
