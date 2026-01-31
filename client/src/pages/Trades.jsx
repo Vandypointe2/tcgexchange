@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../api';
 
 function fmt(card) {
@@ -9,6 +10,7 @@ function fmt(card) {
 }
 
 export default function Trades() {
+  const nav = useNavigate();
   const [recs, setRecs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
@@ -56,8 +58,9 @@ export default function Trades() {
       body: { recipientId: matches.otherUserId, swaps, note },
     });
 
-    // naive redirect to old (server-rendered) trade detail for now
-    window.location.href = `/trade_detail.html?id=${res.trade.id}`;
+    const tradeId = res?.trade?.id || res?.id;
+    if (tradeId) nav(`/app/trades/${encodeURIComponent(tradeId)}`);
+    else alert('Trade proposed (no trade id returned)');
   }
 
   useEffect(() => {
