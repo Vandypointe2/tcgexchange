@@ -41,9 +41,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 		const qNum = card.number || '';
 		const qTot = set.printedTotal || '';
 		const q = `${qName} - ${qNum}/${qTot}`.trim();
-		const tcg = document.getElementById('tcgplayer-link');
-		if (tcg) {
-			tcg.href = `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${encodeURIComponent(q)}&view=grid`;
+		const collectr = document.getElementById('collectr-link');
+		if (collectr) {
+			const q2 = `${qNum}/${qTot}`.trim();
+			collectr.href = `https://app.getcollectr.com/?query=${encodeURIComponent(q2)}&category=3`;
 		}
 
 		// Inline add UI: temporarily replace the two buttons with fields + submit
