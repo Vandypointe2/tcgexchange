@@ -10,8 +10,8 @@ export function CardSizeProvider({ children }) {
 
     // Small + Large define the endpoints; Medium is computed as halfway.
     const sm = { min: 220, h: 64, w: 46 };
-    // Make Large at least ~3x bigger than Small (for the thumbnail size).
-    const lg = { min: 520, h: sm.h * 3, w: sm.w * 3 };
+    // Make Large very large (about 6x Small for the thumbnail size).
+    const lg = { min: 820, h: sm.h * 6, w: sm.w * 6 };
     const md = {
       min: Math.round((sm.min + lg.min) / 2),
       h: Math.round((sm.h + lg.h) / 2),
