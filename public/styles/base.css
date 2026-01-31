@@ -64,6 +64,12 @@ select {
     transition: border-color 0.2s;
 }
 
+/* Ensure native dropdown option menus are readable in both themes */
+select option {
+    background: var(--input-bg);
+    color: var(--text);
+}
+
 input[type="range"] {
     accent-color: var(--highlight);
 }
